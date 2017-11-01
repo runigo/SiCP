@@ -285,7 +285,7 @@ int controleurClavier(controleurT * control)
 
 	// Dissipation
 		case SDLK_e:
-			changeDissipation(&(*control).systeme, 0.7);break;
+			changeDissipation(&(*control).systeme, 0.77);break;
 		case SDLK_d:
 			changeDissipation(&(*control).systeme, 1.3);break;
 		case SDLK_r:
@@ -299,7 +299,7 @@ int controleurClavier(controleurT * control)
 		case SDLK_a:
 			changeCouplage(&(*control).systeme, 1.1);break;
 		case SDLK_q:
-			changeCouplage(&(*control).systeme, 0.9);break;
+			changeCouplage(&(*control).systeme, 0.91);break;
 
 	// Masse
 		case SDLK_z:
@@ -309,15 +309,15 @@ int controleurClavier(controleurT * control)
 
 	// Gravitation
 		case SDLK_t:
-			changeGravitation(&(*control).systeme, 1.1);break;
+			changeGravitation(&(*control).systeme, 1.3);break;
 		case SDLK_g:
-			changeGravitation(&(*control).systeme, 0.9);break;
+			changeGravitation(&(*control).systeme, 0.77);break;
 
 	// Moteur jonction Josephson
 		case SDLK_UP:
 			moteursChangeJosephson(&(*control).systeme.moteur,1.1);break;
 		case SDLK_DOWN:
-			moteursChangeJosephson(&(*control).systeme.moteur,0.9);break;
+			moteursChangeJosephson(&(*control).systeme.moteur,0.91);break;
 		case SDLK_LEFT:
 			moteursChangeJosephson(&(*control).systeme.moteur,-1.0);break;
 		case SDLK_RIGHT:
@@ -327,11 +327,11 @@ int controleurClavier(controleurT * control)
 		case SDLK_p:
 			moteursChangeFrequence(&(*control).systeme.moteur,1.1);break;
 		case SDLK_m:
-			moteursChangeFrequence(&(*control).systeme.moteur,0.9);break;
+			moteursChangeFrequence(&(*control).systeme.moteur,0.91);break;
 		case SDLK_u:
 			moteursChangeAmplitude(&(*control).systeme.moteur,1.1);break;
 		case SDLK_j:
-			moteursChangeAmplitude(&(*control).systeme.moteur,0.9);break;
+			moteursChangeAmplitude(&(*control).systeme.moteur,0.91);break;
 		case SDLK_o:
 			moteursChangeGenerateur(&(*control).systeme.moteur, -1);break;
 		case SDLK_i:
@@ -355,7 +355,11 @@ int controleurClavier(controleurT * control)
 
 		case SDLK_F5:
 			observablesAfficheEnergie(&(*control).systeme);
+			break;
+		case SDLK_F6:
 			moteursAfficheHorloge(&(*control).systeme.moteur);
+			break;
+		case SDLK_F7:
 			projectionAffichePointDeVue(&(*control).projection);
 			break;
 
