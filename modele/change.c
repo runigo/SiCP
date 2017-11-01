@@ -1,7 +1,7 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3  simulateur de chaîne de pendules
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -64,15 +64,14 @@ void changeCouplage(systemeT * systeme, float facteur)
 
 void changeGravitation(systemeT * systeme, float facteur)
 	{// Multiplie la gravitation par facteur
-	chaineT *iter;
-	float maximum;
-	iter=(*systeme).premier;
+	chaineT *iter=(*systeme).premier;
+	float gravitation;
 
-	maximum = (*systeme).gravitation * facteur;
+	gravitation = (*systeme).gravitation * facteur;
 
-	if(maximum < GRAVITATION_MAX)
+	if(gravitation < GRAVITATION_MAX && gravitation > GRAVITATION_MIN)
 		{
-		(*systeme).gravitation = (*systeme).gravitation * facteur;
+		(*systeme).gravitation = gravitation;
 		do
 			{
 			penduleChangeGravitation(&(iter->pendule), facteur);
@@ -92,17 +91,26 @@ void changeGravitation(systemeT * systeme, float facteur)
 
 void changeMasse(systemeT * systeme, float facteur)
 	{// Multiplie la masse par facteur
-	chaineT *iter;
-	iter=(*systeme).premier;
+	chaineT *iter=(*systeme).premier;
+	float masse;
 
-	(*systeme).masse = (*systeme).masse * facteur;
+	masse = (*systeme).masse * facteur;
 
-	do
+	if(masse < MASSE_MAX && masse > MASSE_MIN)
 		{
-		penduleChangeMasse(&(iter->pendule), facteur);
-		iter=iter->suivant;
+		(*systeme).masse = masse;
+		do
+			{
+			penduleChangeMasse(&(iter->pendule), facteur);
+			iter=iter->suivant;
+			}
+		while(iter!=(*systeme).premier);
 		}
-	while(iter!=(*systeme).premier);
+	else
+		{
+		printf("Masse limite atteinte\n");
+		}
+
 	printf("Masse = %6.3f\n", (*systeme).masse);
 
 	return;
@@ -113,17 +121,28 @@ void changeDissipation(systemeT * systeme, float facteur)
 	chaineT *iter;
 	iter = (*systeme).premier;
 
-	if(facteur!=0.0)
+	float dissipation = (*systeme).dissipation * facteur;
+	float dissipationMaximale = DISSIPATION_MAX_DT/(*systeme).moteur.dt;
+
+	if(dissipation < dissipationMaximale && dissipation > DISSIPATION_MIN)
 		{
-		(*systeme).dissipation = (*systeme).dissipation * facteur;
+		if(facteur!=0.0)
+			{
+			(*systeme).dissipation = (*systeme).dissipation * facteur;
+			}
+
+		do
+			{
+			penduleChangeDissipation(&(iter->pendule), facteur);
+			iter=iter->suivant;
+			}
+		while(iter!=(*systeme).premier);
+		}
+	else
+		{
+		printf("dissipation limite atteinte\n");
 		}
 
-	do
-		{
-		penduleChangeDissipation(&(iter->pendule), facteur);
-		iter=iter->suivant;
-		}
-	while(iter!=(*systeme).premier);
 
 	printf("Dissipation = %6.3f\n", (*systeme).dissipation);
 
@@ -220,8 +239,12 @@ void changeLimite(systemeT * systeme)
 	}
 
 void changeDephasage(systemeT * systeme, float dephasage)
-	{
-	penduleAjouteDephasage(&(*systeme).premier->precedent->pendule, dephasage);
+	{//Version 1.3 : ->precedent->precedent
+	penduleAjouteDephasage(&(*systeme).premier->pendule, dephasage);
+
+	printf("Dephasage premier = %6.3f\n", (*systeme).premier->pendule.dephasage);
+
+	return;
 	}
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3.5  simulateur de chaîne de pendules
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -44,21 +44,42 @@ termes.
 #define PI 3.14159265359
 #define DEUXPI 6.28318530718
 
-#define LARGEUR 990 // Largeur de la fenêtre
+#define LARGEUR 999 // Largeur de la fenêtre 990
 #define HAUTEUR 440 // Hauteur de la fenêtre
 
 #define DUREE_MAX 999 // Nombre maximal d'incrémentation du système entre deux affichages.
 
 #define DT_MIN 0.0000003 // Discrétisation minimal du temps
-#define DT_MAX 0.003 // Discrétisation maximale du temps
+#define DT 0.0003
+#define DT_MAX 0.003		//	discrétisation du temps
+//#define DT_MIN 0.000000003	//	discrétisation du temps
 
 #define NOMBRE_MIN 2 // Nombre minimal de pendules
 #define NOMBRE_MAX 1099 // Nombre maximal de pendules
 
 #define SOLITON_MAX 199 // Nombre maximal de soliton
 
-#define COUPLAGE_MAX 99 // Couplage maximal.
-#define GRAVITATION_MAX 666 // Gravitation maximal.
+#define COUPLAGE_MAX 99 // Couplage maximal / nombre de pendule
+#define COUPLAGE_MIN 0.003
 
+//#define GRAVITATION_MAX 666 // Gravitation maximal.
+#define GRAVITATION_MAX 7777
+#define GRAVITATION_MIN 0.00007
+
+#define MASSE_MAX 7777
+#define MASSE_MIN 0.7
+
+#define DISSIPATION_MAX 333	//	Coeficient de frottement visqueux
+#define DISSIPATION_MAX_DT 0.0999
+#define DISSIPATION_MIN 0.0000003
+
+#define FREQUENCE_MAX 9123
+#define FREQUENCE_MIN 0.00007
+
+#define AMPLITUDE_MAX 912
+#define AMPLITUDE_MIN 0.00007
+
+#define JOSEPHSON_MAX 912
+#define JOSEPHSON_MIN 0.00007
 
 #endif

@@ -1,7 +1,7 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3  simulateur de chaîne de pendules
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -160,7 +160,11 @@ void systemeEvolution(systemeT * systeme, int duree)
 		//printf(" systemeJaugeZero\n");
 		systemeJaugeZero(systeme);
 		}
-
+	else
+		{
+		//printf(" systemeJaugeZero\n");
+		moteurJaugeZero(&(*systeme).moteur);
+		}
 	return;
 	}
 
@@ -223,7 +227,7 @@ void systemeInertie(systemeT * systeme)
 void systemeIncremente(systemeT * systeme)
 	{//	incremente l'horloge, l'ancien et l'actuel etat du systeme
 
-	(*systeme).moteur.horloge=(*systeme).moteur.horloge+(*systeme).moteur.dt;
+	//(*systeme).moteur.horloge=(*systeme).moteur.horloge+(*systeme).moteur.dt;
 	(*systeme).moteur.chrono=(*systeme).moteur.chrono+(*systeme).moteur.dt;
 
 	chaineT *iter;

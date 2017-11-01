@@ -45,13 +45,13 @@ lors de l'exécution, la fenêtre graphique doit être active pour piloter
 la chaîne.
 
 	a, q : augmenter, diminuer le couplage
-	z, s : augmenter, diminuer la gravitation
+	z, s : augmenter, diminuer la masse
 
 	e, d : diminuer, augmenter la dissipation
 	r, f : retire, forme la dissipation
 	v : forme l'extrémité absorbante
 
-	t, g : augmenter, diminuer la masse
+	t, g : augmenter, diminuer la gravitation
 	y, h : ajoute, enlève un déphasage de 2pi
 
 	w : conditions aux limites périodique
@@ -74,16 +74,16 @@ la chaîne.
 	Entrée : change le mode temporel
 
 	+, - : augmente, diminue la vitesse de la simulation
-	F1, F2 : diminue, augmente la vitesse de la simulation
+	F11, F12 : diminue, augmente la vitesse de la simulation
 
 Lorsque le bouton de la souris est maintenu, les mouvements de celle-ci
 permettent la rotation du point de vue de l'observateur.
 
 LICENCE
 
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3.5 simulateur de chaîne de pendules
+SiCP 1.3.8 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et

@@ -1,7 +1,8 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3  simulateur de chaîne de pendules
+SiCF 1.2
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -72,6 +73,7 @@ void penduleInitialiseGamma(penduleT * pendul, float gravitation, float dt);
 
 	// Variation des parametres
 
+void penduleReinitialiseMasse(penduleT * pendul, float masse, float gravitation, float dt);
 void penduleChangeMasse(penduleT * pendul, float facteur);
 void penduleChangeLongueur(penduleT * pendul, float facteur);
 void penduleChangeCouplage(penduleT * pendul, float facteur);

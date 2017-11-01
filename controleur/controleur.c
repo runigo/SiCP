@@ -1,7 +1,7 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3.7 simulateur de chaîne de pendules
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -233,37 +233,35 @@ int controleurClavier(controleurT * control)
 	{
 	switch ((*control).evenement.key.keysym.sym)
 		{
-
 	// Sortie
-
 		case SDLK_ESCAPE:
 			(*control).sortie = 1;break;
 
-    // Mode : attente d'un evenement / pas d'attente
-
+	// Mode : attente d'un evenement / pas d'attente
 		case SDLK_RETURN:
 			controleurChangeMode(control);break;
-		case SDLK_BACKSPACE:
-			controleurChangeMode(control);break;
+		//case SDLK_BACKSPACE:
+			//controleurChangeMode(control);break;
 
 	// Vitesse de la simulation
-
 		case SDLK_KP_PLUS:
 			controleurChangeVitesse(control, 1.1);break;
 		case SDLK_KP_MINUS:
-			controleurChangeVitesse(control, 0.9);break;
-
-		case SDLK_F1:
-			controleurChangeVitesse(control, 0.9);break;
-		case SDLK_F2:
+			controleurChangeVitesse(control, 0.91);break;
+		case SDLK_F9:
+			controleurChangeVitesse(control, 0.32);break;
+		case SDLK_F10:
+			controleurChangeVitesse(control, 0.91);break;
+		case SDLK_F11:
 			controleurChangeVitesse(control, 1.1);break;
+		case SDLK_F12:
+			controleurChangeVitesse(control, 3.1);break;
 
-	// 
+	// Support
 		case SDLK_F8:
 			grapheChangeSupport(&(*control).graphe);break;
 
 	// Conditions aux limites
-
 		case SDLK_y:
 			changeDephasage(&(*control).systeme, 2*PI);break;
 		case SDLK_h:
@@ -286,11 +284,10 @@ int controleurClavier(controleurT * control)
 
 
 	// Dissipation
-
-		case SDLK_d:
-			changeDissipation(&(*control).systeme, 1.3);break;
 		case SDLK_e:
 			changeDissipation(&(*control).systeme, 0.7);break;
+		case SDLK_d:
+			changeDissipation(&(*control).systeme, 1.3);break;
 		case SDLK_r:
 			changeFormeDissipation(&(*control).systeme, 0);break;
 		case SDLK_f:
@@ -299,22 +296,24 @@ int controleurClavier(controleurT * control)
 			changeFormeDissipation(&(*control).systeme, 2);break;
 
 	// Couplage
-
 		case SDLK_a:
 			changeCouplage(&(*control).systeme, 1.1);break;
 		case SDLK_q:
 			changeCouplage(&(*control).systeme, 0.9);break;
 
-	// Gravitation
-
+	// Masse
 		case SDLK_z:
-			changeGravitation(&(*control).systeme, 1.1);break;
+			changeMasse(&(*control).systeme, 1.7);break;
 		case SDLK_s:
+			changeMasse(&(*control).systeme, 0.6);break;
+
+	// Gravitation
+		case SDLK_t:
+			changeGravitation(&(*control).systeme, 1.1);break;
+		case SDLK_g:
 			changeGravitation(&(*control).systeme, 0.9);break;
 
-
 	// Moteur jonction Josephson
-
 		case SDLK_UP:
 			moteursChangeJosephson(&(*control).systeme.moteur,1.1);break;
 		case SDLK_DOWN:
@@ -325,7 +324,6 @@ int controleurClavier(controleurT * control)
 			moteursChangeJosephson(&(*control).systeme.moteur,0.0);break;
 
 	// Moteur générateur de signaux
-
 		case SDLK_p:
 			moteursChangeFrequence(&(*control).systeme.moteur,1.1);break;
 		case SDLK_m:
@@ -344,24 +342,15 @@ int controleurClavier(controleurT * control)
 
 	// Choix de la simulation
 /*
-		case SDLK_F9: // Pendules
+		case SDLK_F1: // Pendules
 			(*control).systeme.equation = 1;break;
-		case SDLK_F10: // Harmoniques
+		case SDLK_F2: // Harmoniques
 			(*control).systeme.equation = 2;break;
-		case SDLK_F11: // Corde
+		case SDLK_F3: // Corde
 			(*control).systeme.equation = 3;break;
-		case SDLK_F12: // Corde asymétrique
+		case SDLK_F4: // Corde asymétrique
 			(*control).systeme.equation = 4;break;
 */
-	// Change la masse
-
-		case SDLK_t:
-			changeMasse(&(*control).systeme, 1.7);
-			break;
-		case SDLK_g:
-			changeMasse(&(*control).systeme, 0.6);
-			break;
-
   // Afficher les observables
 
 		case SDLK_F5:

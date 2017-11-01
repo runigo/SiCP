@@ -1,7 +1,7 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3  simulateur de chaîne de pendules
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -38,7 +38,7 @@ typedef struct MoteursT moteursT;
 	struct MoteursT
 		{
 		float dt;			//	discrétisation du temps
-		float horloge;		//	Somme des dt
+		//float horloge;		//	Somme des dt
 		float chrono;		//	Somme des dt remis à zéro dans moteurs
 
 		int generateur;		//	0:eteint, 1:sinus, 2:carre, 3:impulsion
@@ -52,6 +52,7 @@ typedef struct MoteursT moteursT;
 		};
 
 float moteursGenerateur(moteursT * m);
+float moteurJaugeZero(moteursT * m);
 
 void moteursChangeJosephson(moteursT * m, float facteur);
 void moteursChangeFrequence(moteursT * m, float facteur);

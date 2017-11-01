@@ -1,7 +1,7 @@
 /*
-Copyright juillet 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3.5  simulateur de chaîne de pendules
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -35,16 +35,16 @@ int main(int nb, char *opt[])
 	{
 	controleurT control;
 
-	fprintf(stderr, "\nInitialisations des options");
+	fprintf(stderr, "\nInitialisations des options\n");
 	assert(donneesOptions(&control.options)==0);
 
-	fprintf(stderr, "\nTraitement des options de la ligne de commande");
+	fprintf(stderr, "Traitement des options de la ligne de commande\n");
 	assert(optionsTraitement(&control.options, nb, opt)==0);
 
-	fprintf(stderr, "\nInitialisations et créations ");
+	fprintf(stderr, "Initialisations et créations\n");
 	assert(donneesControleur(&control)==0);
 
-	fprintf(stderr, "\nSimulation graphique du système, ");
+	fprintf(stderr, "Simulation graphique du système\n");
 	assert(controleurSimulationGraphique(&control)==0);
 
 	//fprintf(stderr, "Calcul énergétique\n");

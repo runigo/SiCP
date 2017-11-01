@@ -1,7 +1,7 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.3  simulateur de chaîne de pendules
+SiCP 1.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -59,6 +59,59 @@ float moteursGenerateur(moteursT * moteur)
 	return amplitude;
 	}
 
+float moteurJaugeZero(moteursT * moteur)
+	{
+			// Normalise la phase et le chrono
+	if((*moteur).phi > DEUXPI)
+		{
+		do
+			{
+			//printf("(*moteur).phi = %f\n",(*moteur).phi);
+			//(*moteur).phi = (*moteur).phi - ((int)((*moteur).phi/DEUXPI))*DEUXPI;
+			(*moteur).phi = (*moteur).phi - DEUXPI;
+			}
+		while((*moteur).phi > DEUXPI);
+		}
+	else 
+		{
+			if((*moteur).phi < - DEUXPI)
+			{
+			do
+				{
+				//printf("(*moteur).phi = %f\n",(*moteur).phi);
+				//(*moteur).phi = (*moteur).phi - ((int)((*moteur).phi/DEUXPI))*DEUXPI;
+				(*moteur).phi = (*moteur).phi + DEUXPI;
+				}
+			while((*moteur).phi < - DEUXPI);
+			}
+		}
+
+	float phase = (*moteur).frequence * (*moteur).chrono;
+	if(phase > DEUXPI)
+		{
+		do
+			{
+			//printf("(*moteur).frequence * (*moteur).chrono = %f\n",phase);
+			(*moteur).chrono = (*moteur).chrono - ( (int)(phase/DEUXPI) ) * DEUXPI/(*moteur).frequence;
+			}
+		while((*moteur).frequence * (*moteur).chrono > DEUXPI);
+		}
+	else 
+		{
+		if(phase < - DEUXPI)
+			{
+			do
+				{
+				//printf("(*moteur).frequence * (*moteur).chrono = %f\n",phase);
+				(*moteur).chrono = (*moteur).chrono - ( (int)(phase/DEUXPI) ) * DEUXPI/(*moteur).frequence;
+				}
+			while((*moteur).frequence * (*moteur).chrono < - DEUXPI);
+			}
+		}
+
+	return 0;
+	}
+
 void moteursChangeGenerateur(moteursT * moteur, int i)
 
 			// Change la forme du signal
@@ -113,13 +166,21 @@ void moteursChangeFrequence(moteursT * moteur, float facteur)
 	{
 	float phase;
 
-	phase = (*moteur).phi + (*moteur).frequence * (*moteur).chrono;
+	if((*moteur).frequence * facteur < FREQUENCE_MAX && (*moteur).frequence * facteur > FREQUENCE_MIN)
+		{
+		phase = (*moteur).phi + (*moteur).frequence * (*moteur).chrono;
 
-	(*moteur).frequence = (*moteur).frequence * facteur;
+		(*moteur).frequence = (*moteur).frequence * facteur;
 
-	(*moteur).phi = phase - (*moteur).frequence * (*moteur).chrono;
+		(*moteur).phi = phase - (*moteur).frequence * (*moteur).chrono;
 
-	printf("frequence générateur = %6.3f\n", (*moteur).frequence);
+		}
+	else
+		{
+		printf("Fréquence limite atteinte. ");
+		}
+	printf("Fréquence générateur = %6.3f\n", (*moteur).frequence);
+
 	return;
 	}
 
@@ -127,8 +188,16 @@ void moteursChangeAmplitude(moteursT * moteur, float facteur)
 
 			//	Change l'amplitude du signal
 	{
-	(*moteur).amplitude = (*moteur).amplitude * facteur;
-	printf("amplitude générateur = %6.3f\n", (*moteur).amplitude);
+	float amplitude = (*moteur).amplitude * facteur;
+	if(amplitude < AMPLITUDE_MAX && amplitude > AMPLITUDE_MIN)
+		{
+		(*moteur).amplitude = (*moteur).amplitude * facteur;
+		}
+	else
+		{
+		printf("Amplitude limite atteinte. ");
+		}
+	printf("Amplitude générateur = %6.3f\n", (*moteur).amplitude);
 	return;
 	}
 
@@ -136,7 +205,7 @@ void moteursChangeJosephson(moteursT * moteur, float facteur)
 
 				// Règle la valeur du courant Josephson
 	{
-	if(facteur == 0)
+	if(facteur == 0) // Allume / éteint le courant Josephson
 		{
 		if((*moteur).josephson == 0)
 			{
@@ -148,12 +217,26 @@ void moteursChangeJosephson(moteursT * moteur, float facteur)
 			}
 		}
 	else
+		if(facteur < 0) // Inverse le sens du courant Josephson
+			{
+			(*moteur).josephson = - (*moteur).josephson;
+			(*moteur).courant = - (*moteur).courant;
+			}
+		else
 		{
-		(*moteur).josephson = ((*moteur).josephson) * facteur;
-		(*moteur).courant = ((*moteur).courant) * facteur;
+		float courant = (*moteur).josephson * facteur;
+		if(courant < JOSEPHSON_MAX && courant > JOSEPHSON_MIN)
+			{
+			(*moteur).josephson = ((*moteur).josephson) * facteur;
+			(*moteur).courant = ((*moteur).courant) * facteur;
+			}
+		else
+			{
+			printf("Courant Josephson limite atteint. ");
+			}
 		}
 
-	printf("courant Josephson = %6.3f\n", (*moteur).josephson / (*moteur).dt / (*moteur).dt);
+	printf("Courant Josephson = %6.3f\n", (*moteur).josephson / (*moteur).dt / (*moteur).dt);
 
 	return;
 	}
@@ -162,7 +245,7 @@ void moteursAfficheHorloge(moteursT * m)
 
 			// 	Affiche les paramètres de l'horloge
 	{
-	printf("(*moteur).horloge = %6.3f\n", (*m).horloge);		//	Somme des dt
+	//printf("(*moteur).horloge = %6.3f\n", (*m).horloge);		//	Somme des dt
 	printf("(*moteur).chrono = %6.3f\n", (*m).chrono);		//	Remis à zéro
 
 	return;
@@ -173,7 +256,7 @@ void moteursAffiche(moteursT * moteur)
 			// 	Affiche la valeur des paramètres du moteur
 	{
 	printf("courant Josephson = %6.3f\n", (*moteur).josephson / (*moteur).dt / (*moteur).dt);
-	printf("(*moteur).horloge = %6.3f\n", (*moteur).horloge);		//	Somme des dt
+	//printf("(*moteur).horloge = %6.3f\n", (*moteur).horloge);		//	Somme des dt
 	printf("(*moteur).chrono = %6.3f\n", (*moteur).chrono);		//	Remis à zéro
 
 	printf("(*moteur).generateur = %d", (*moteur).generateur);
