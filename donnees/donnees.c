@@ -1,7 +1,7 @@
 /*
 Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.4 simulateur de chaîne de pendules
+SiCP 1.4.1 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -11,16 +11,16 @@ de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 En contrepartie de l'accessibilité au code source et des droits de copie,
 de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+offert aux utilisateurs qu'une garantie limitée. Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
+associés au chargement, à l'utilisation, à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des  connaissances  informatiques approfondies. Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation du
+avertis possédant des connaissances informatiques approfondies. Les
+utilisateurs sont donc invités à charger et tester l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
@@ -68,7 +68,7 @@ int donneesControleur(controleurT * control)
 		fprintf(stderr, "projectionInitialiseLongueurs\n");
 	projectionInitialiseLongueurs(&(*control).projection, HAUTEUR/3, LARGEUR*0.7, 0.9);// hauteur, largeur, perspective
 		fprintf(stderr, "projectionInitialisePointDeVue\n");
-	projectionInitialisePointDeVue(&(*control).projection, 3*LARGEUR, 0.1 + PI/2, 0.1 + PI/2);//r, psi, phi
+	projectionInitialisePointDeVue(&(*control).projection, 3*LARGEUR, PI/2 - 0.27, PI/2 + 0.21);//r, psi, phi
 
 		fprintf(stderr, " Initialisation SDL\n");
 	graphiqueInitialise((*control).options.fond);
@@ -127,7 +127,7 @@ int donneesSysteme(systemeT * systeme, optionsT * options)
 	(*systeme).gravitation = 9.81;
 	(*systeme).masse = 1.0;
 	(*systeme).longueur = 9.81/4/PI/PI; // = 25 cm => période = 1 s
-	(*systeme).dissipation = 1.3;
+	(*systeme).dissipation = 0.3;
 	(*systeme).couplage = 11.1 * (*systeme).nombre;
 	(*systeme).dephasage = (*options).soliton * 2 * PI;
 

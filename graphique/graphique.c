@@ -1,9 +1,9 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiGP 1.3.7  simulateur de gaz parfait
-Ce logiciel est un programme informatique servant à simuler une détente
-de Joule et à en donner une représentation graphique.
+SiCP 1.4.1 simulateur de chaîne de pendules
+Ce logiciel est un programme informatique servant à simuler l'équation
+d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
 respectant les principes de diffusion des logiciels libres. Vous pouvez
 utiliser, modifier et/ou redistribuer ce programme sous les conditions
@@ -107,7 +107,7 @@ void graphiqueLigneDroite(int X, int Y, int x, int y, Uint32 couleur)
 	if(max<0) max=-max; if(min<0) min=-min;
 	if(max<min) max=min;
 
-	for(i=0;i<max;i++)
+	for(i=0;i<=max;i++)
 		{
 		a=i/(float)max;
 		abs=(X+(int)(a*(x-X)));
@@ -174,13 +174,17 @@ void graphiqueTriangleGris(int X, int Y, int Ax, int Ay, int Bx, int By)
 		c=(float)(x[2]-x[0])/(y[2]-y[0]); d=x[0]-c*y[0];
 
 	for(i=y[0];i<=y[1];i++)
+		//{graphiqueTige(a*i+b, i, c*i+d, i, couleurG);}
 		{graphiqueLigneDroite(a*i+b, i, c*i+d, i, couleurG);}
+	//graphiqueLigneDroite(a*i+b+1, i+1, c*i+d+1, i+1, couleurG);
 
 	if(y[1]!=y[2])
 		a=(float)(x[2]-x[1])/(y[2]-y[1]); b=x[1]-a*y[1];
 
 	for(i=y[1];i<=y[2];i++)
+		//{graphiqueTige(a*i+b, i, c*i+d, i, couleurG);}
 		{graphiqueLigneDroite(a*i+b, i, c*i+d, i, couleurG);}
+	//graphiqueLigneDroite(a*i+b+1, i+1, c*i+d+1, i+1, couleurG);
 
 	return;
 	}
@@ -198,8 +202,14 @@ void graphiqueTriangle(int X, int Y, int Ax, int Ay, int Bx, int By)
 void graphiqueRectangle(int Ax, int Ay, int Bx, int By, int Cx, int Cy, int Dx, int Dy)
 	{
 	Uint32 couleurC = SDL_MapRGB(affichage->format, 0, 0, 0);
+
 	graphiqueTriangleGris(Ax, Ay, Bx, By, Cx, Cy);
 	graphiqueTriangleGris(Ax, Ay, Cx, Cy, Dx, Dy);
+
+	//Uint32 couleurG = SDL_MapRGB(affichage->format, 127, 127, 127);
+	//graphiqueLigneDroite(Bx, By, Dx, Dy, couleurG);
+	//graphiqueLigneDroite(Cx, Cy, Ax, Ay, couleurG);
+
 	graphiqueLigneDroite(Bx, By, Ax, Ay, couleurC);
 	graphiqueLigneDroite(Dx, Dy, Ax, Ay, couleurC);
 	graphiqueLigneDroite(Cx, Cy, Bx, By, couleurC);

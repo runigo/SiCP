@@ -1,7 +1,7 @@
 /*
 Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.4 simulateur de chaîne de pendules
+SiCP 1.4.1 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -11,16 +11,16 @@ de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 En contrepartie de l'accessibilité au code source et des droits de copie,
 de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+offert aux utilisateurs qu'une garantie limitée. Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
+associés au chargement, à l'utilisation, à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des  connaissances  informatiques approfondies. Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation du
+avertis possédant des connaissances informatiques approfondies. Les
+utilisateurs sont donc invités à charger et tester l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
@@ -84,7 +84,7 @@ void systemeInitialisePendule(systemeT * systeme)
 		}
 	while(iter != (*systeme).premier);
 
-	penduleInitialiseDephasage(&iter->pendule, (*systeme).dephasage);
+	penduleInitialiseDephasage(&(*systeme).premier->pendule, (*systeme).dephasage);
 
 	return;
 	}
@@ -114,16 +114,12 @@ void systemeInitialiseLimiteInfini(systemeT * systeme)
 
 /*----------------JAUGE ET NORMALISATION-------------------*/
 
-// normalise le premier pendule
 void systemeJaugeZero(systemeT * systeme)
-	{
+	{//	Rapproche la position du premier pendule de zéro
 	chaineT *iter;
 	iter=(*systeme).premier;
 	float position = (*systeme).premier->pendule.nouveau;
 	float jauge;
-
-	//fprintf(stderr, "\nEntrée systemeJaugeZero, position = %f\n", position);
-	//fprintf(stderr, "\nEntrée systemeJaugeZero, position/DEUXPI = %f\n", position/DEUXPI);
 
 	jauge = -DEUXPI*(int)(position/DEUXPI);
 	if(jauge>PI || jauge<PI)
@@ -136,33 +132,33 @@ void systemeJaugeZero(systemeT * systeme)
 		while(iter!=(*systeme).premier);
 		}
 
-
-	//fprintf(stderr, "Moyenne = %f\n", systemeMoyenne(system));
-	//fprintf(stderr, "systemeJaugeZero, sortie\n\n");
 	return;
 	}
 
 /*------------------------  ÉVOLUTION TEMPORELLE  -------------------------*/
 
 void systemeEvolution(systemeT * systeme, int duree)
-	{//	Fait évoluer le systeme pendant duree * dt
+	{
 	int i;
+
+	//	Fait évoluer le système pendant duree*dt
 	for(i=0;i<duree;i++)
 		{
+		//	Évolution élémentaire
 		systemeCouplage(systeme);
 		systemeInertie(systeme);
 		systemeIncremente(systeme);
 		}
 
-		//	Rapproche la position du premier pendule de zéro
+	//	Limite la valeur des paramètres croissants
 	if((*systeme).moteur.generateur==0)
 		{
-		//printf(" systemeJaugeZero\n");
+		//	Rapproche la position du premier pendule de zéro
 		systemeJaugeZero(systeme);
 		}
 	else
 		{
-		//printf(" systemeJaugeZero\n");
+		//	Rapproche les compteurs du moteur de zéro
 		moteurJaugeZero(&(*systeme).moteur);
 		}
 	return;
@@ -175,7 +171,7 @@ void systemeCouplage(systemeT * systeme)
 
 	do
 		{
-	penduleCouplage(&(iter->precedent->pendule), &(iter->pendule), &(iter->suivant->pendule));
+		penduleCouplage(&(iter->precedent->pendule), &(iter->pendule), &(iter->suivant->pendule));
 		iter=iter->suivant;
 		}
 	while(iter!=(*systeme).premier);
@@ -184,7 +180,7 @@ void systemeCouplage(systemeT * systeme)
 	}
 
 void systemeInertie(systemeT * systeme)
-	{//	Principe d'inertie applique au systeme
+	{//	Principe d'inertie appliqué au systeme
 	float courantJosephson = (*systeme).moteur.josephson;
 	float generateur = moteursGenerateur(&(*systeme).moteur);
 
@@ -196,15 +192,26 @@ void systemeInertie(systemeT * systeme)
 		penduleInitialisePosition(&((*systeme).premier->pendule), generateur, generateur);
 		}
 	else
+		{
 		if ((*systeme).libreFixe==0 || (*systeme).libreFixe==1 || (*systeme).libreFixe==3 )
 			{
 			penduleInertie(&((*systeme).premier->pendule), (*systeme).equation, courantJosephson);
 			}
+		else	//	premier fixe
+			{
+			penduleInitialisePosition(&((*systeme).premier->pendule), 0.0, 0.0);
+			}
+		}
 
 		// Cas du dernier pendule
 	if ((*systeme).libreFixe==0 || (*systeme).libreFixe==1 || (*systeme).libreFixe==4 )
 		{
 		penduleInertie(&((*systeme).premier->precedent->pendule), (*systeme).equation, courantJosephson);
+		}
+	else	//	dernier fixe
+		{
+		penduleInitialisePosition(&((*systeme).premier->precedent->pendule), 0.0, 0.0);
+		//penduleInitialisePosition(&((*systeme).premier->precedent->pendule), -(*systeme).premier->pendule.dephasage, -(*systeme).premier->pendule.dephasage);
 		}
 
 

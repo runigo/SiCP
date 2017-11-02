@@ -1,8 +1,7 @@
 /*
 Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCF 1.2
-SiCP 1.4 simulateur de chaîne de pendules
+SiCP 1.4.1 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -12,16 +11,16 @@ de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 En contrepartie de l'accessibilité au code source et des droits de copie,
 de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+offert aux utilisateurs qu'une garantie limitée. Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
+associés au chargement, à l'utilisation, à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des  connaissances  informatiques approfondies. Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation du
+avertis possédant des connaissances informatiques approfondies. Les
+utilisateurs sont donc invités à charger et tester l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
@@ -38,19 +37,23 @@ termes.
 typedef struct PenduleT penduleT;
 	struct PenduleT
 		{
-		double ancien, actuel, nouveau;
+		double ancien, actuel, nouveau; // Position
+
+		float dephasage; // Déphasage avec le précédent
 
 		float masse;
 		float longueur;
 		float couplage;
-		float dephasage;
-		float dissipation; // initialise l'extrémite absorbante
+		float gravitation;
+		float dissipation;
 
-		float alpha;	// dt * constante de frottement / masse
+		float absorbance; // Mémoire pour l'extrémité absorbante
+
+		float alpha;	// dt * constante de frottement / masse / longueur
 		float kapa;	// dt2 * constante de couplage / masse
-		float gamma;	// dt2 * accélération gravitationnelle
+		float gamma;	// dt2 * accélération gravitationnelle / longueur
 
-		double forceCouplage;	// force de couplage avec le suivant
+		double forceCouplage;	// force de couplage avec les pendules voisins
 		double forceTotale;	// somme des forces appliquées au pendule : 
 					// (couplage + gravitation + dissipation + courantJosephson)
 		};
@@ -73,7 +76,7 @@ void penduleInitialiseGamma(penduleT * pendul, float gravitation, float dt);
 
 	// Variation des parametres
 
-void penduleReinitialiseMasse(penduleT * pendul, float masse, float gravitation, float dt);
+void penduleReinitialiseMasse(penduleT * pendul, float masse, float dt);
 void penduleChangeMasse(penduleT * pendul, float facteur);
 void penduleChangeLongueur(penduleT * pendul, float facteur);
 void penduleChangeCouplage(penduleT * pendul, float facteur);
