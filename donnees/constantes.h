@@ -1,7 +1,7 @@
 /*
 Copyright novembre 2017, Stephan Runigo
 runigo@free.fr
-SiCP 1.4 simulateur de chaîne de pendules
+SiCP 1.4.2 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -70,7 +70,7 @@ termes.
 #define MASSE_MIN 0.7
 
 #define DISSIPATION_MAX 333	//	Coeficient de frottement visqueux
-#define DISSIPATION_MAX_DT 0.0999
+#define DISSIPATION_MAX_DT 0.00999
 #define DISSIPATION_MIN 0.0000003
 
 #define FREQUENCE_MAX 9123
