@@ -1,7 +1,7 @@
 /*
-Copyright juillet 2017, Stephan Runigo
+Copyright janvier 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.3.5  simulateur de chaîne de pendules
+SiCP 1.4.3  simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -63,27 +63,27 @@ int projectionInitialisePointDeVue(projectionT * projection, float r, float psi,
 
 int projectionChangePhi(projectionT * projection, float x)
 	{		// Change la position de l'observateur suivant phi
+			// phi ne se raproche pas trop de zéro afin d'éviter un bug
 	float r, psi, phi;
-	float epsilon  = 0.01;
 
 	r = (*projection).pointDeVue.r;
 	psi = (*projection).pointDeVue.psi;
 	phi = (*projection).pointDeVue.phi + x;
 
-	if(phi >= PI-epsilon)
+	if(phi >= PI-EPSILON)
 		{
-		phi = PI-epsilon;
+		phi = PI-EPSILON;
 		}
 
-	if(phi <= epsilon)
+	if(phi <= EPSILON)
 		{
-		phi = epsilon;
+		phi = EPSILON;
 		}
 
-	if(phi > PI/2 - epsilon && phi < PI/2 + epsilon)
+	if(phi > PI/2 - EPSILON && phi < PI/2 + EPSILON)
 		{
-		if(phi > 0.0) phi = PI/2 + epsilon;
-		else phi = PI/2 - epsilon;
+		if(phi > 0.0) phi = PI/2 + EPSILON;
+		else phi = PI/2 - EPSILON;
 		}
 
 	vecteurInitialisePolaire(&(*projection).pointDeVue, r, psi, phi);

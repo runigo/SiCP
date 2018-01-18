@@ -46,6 +46,7 @@ termes.
 
 #define LARGEUR 999 // Largeur de la fenêtre 990
 #define HAUTEUR 440 // Hauteur de la fenêtre
+#define EPSILON 0.01 // Valeur minimale de phi afin d'éviter un bug
 
 #define DUREE_MAX 999 // Nombre maximal d'incrémentation du système entre deux affichages.
 
