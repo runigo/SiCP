@@ -1,7 +1,7 @@
 /*
-Copyright janvier 2018, Stephan Runigo
+Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4.3  simulateur de chaîne de pendules
+SiCP 1.4.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -63,34 +63,39 @@ int projectionInitialisePointDeVue(projectionT * projection, float r, float psi,
 
 int projectionChangePhi(projectionT * projection, float x)
 	{		// Change la position de l'observateur suivant phi
-			// phi ne se raproche pas trop de zéro afin d'éviter un bug
 	float r, psi, phi;
 
 	r = (*projection).pointDeVue.r;
 	psi = (*projection).pointDeVue.psi;
 	phi = (*projection).pointDeVue.phi + x;
 
-	if(phi >= PI-EPSILON)
+		// phi ne se raproche pas trop de PI afin d'éviter un bug
+	if(phi > PI-EPSILON)
 		{
 		phi = PI-EPSILON;
 		}
 
-	if(phi <= EPSILON)
+		// phi ne se raproche pas trop de zéro afin d'éviter un bug
+	if(phi < EPSILON)
 		{
 		phi = EPSILON;
 		}
 
+		// phi ne se raproche pas trop de PI/2 afin d'éviter un bug
+	/*
 	if(phi > PI/2 - EPSILON && phi < PI/2 + EPSILON)
 		{
 		if(phi > 0.0) phi = PI/2 + EPSILON;
 		else phi = PI/2 - EPSILON;
 		}
+	//*/
 
 	vecteurInitialisePolaire(&(*projection).pointDeVue, r, psi, phi);
 	vecteurInitialiseVecteurPhi(&(*projection).pointDeVue, &(*projection).vecteurPhi, (*projection).perspective);
 	vecteurInitialiseVecteurPsi(&(*projection).pointDeVue, &(*projection).vecteurPsi, (*projection).perspective);
 	return 0;
 	}
+
 int projectionChangePsi(projectionT * projection, float x)
 	{		// Change la position de l'observateur suivant psi
 	float r, psi, phi;
@@ -287,13 +292,15 @@ int projectionPerspectiveChaine(projectionT * projection, grapheT * graphe)
 	pointsT *iterGraph=(*graphe).premier;
 
 	vecteurT v;
+	int centrageX = LARGEUR/2;
+	int centrageY = (int)(HAUTEUR*0.45);
 
 	do
 		{
 			// Coordonnees 2D de la masse et centrage du graphe
 		vecteurDifferenceCartesien(&(iterGraph->masse), &(*projection).pointDeVue, &v);
-		iterGraph->xm = LARGEUR/2 + vecteurScalaireCartesien(&v, &(*projection).vecteurPsi);
-		iterGraph->ym = HAUTEUR*0.45 + vecteurScalaireCartesien(&v, &(*projection).vecteurPhi);
+		iterGraph->xm = centrageX + vecteurScalaireCartesien(&v, &(*projection).vecteurPsi);
+		iterGraph->ym = centrageY + vecteurScalaireCartesien(&v, &(*projection).vecteurPhi);
 
 			// Position avant ou arrière de la masse
 		iterGraph->position = iterGraph->masse.y * (*projection).pointDeVue.y;
@@ -314,7 +321,7 @@ int projectionPerspectiveChaine(projectionT * projection, grapheT * graphe)
 
 int projectionSystemChaine3D(systemeT * systeme, projectionT * projection, grapheT * graphe)
 	{	//	Projette le système sur une chaîne de pendule en 3 D
-	float x=0;
+	//float x=0;
 	float i = -(*systeme).nombre/2;
 
 	chaineT *iterSystem=(*systeme).premier;
@@ -332,8 +339,8 @@ int projectionSystemChaine3D(systemeT * systeme, projectionT * projection, graph
 		iterGraph->masse.y = (*projection).hauteur * sin(iterSystem->pendule.nouveau);
 		iterGraph->masse.z = (*projection).hauteur * cos(iterSystem->pendule.nouveau);
 
-		if(x>0) iterGraph->position=1;
-		else iterGraph->position=0;
+		//if(x>0) iterGraph->position=1;
+		//else iterGraph->position=0;
 
 		iterGraph = iterGraph->suivant;
 		iterSystem = iterSystem->suivant;

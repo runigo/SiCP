@@ -1,7 +1,7 @@
 /*
-Copyright novembre 2017, Stephan Runigo
+Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4.1 simulateur de chaîne de pendules
+SiCP 1.4.4 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -31,6 +31,16 @@ termes.
 
 #include "graphique.h"
 
+/*
+	VARIABLE GLOBALE
+*/
+
+SDL_Surface* affichage;
+
+/*
+	...............
+*/
+
 void graphiqueAffichePixel (int x, int y, Uint32 couleur);
 void graphiquegraphiqueAffichePixelVerif(int x, int y, Uint32 couleur);
 void graphiqueligneDroite(int X, int Y, int x, int y, Uint32 couleur);
@@ -40,8 +50,6 @@ void graphiqueMasse(int abs, int ord, Uint32 couleur);
 void graphiqueTriangleGris(int X, int Y, int Ax, int Ay, int Bx, int By);
 
 void graphiqueMobile(grapheT * graphe);
-
-SDL_Surface* affichage;
 
 int graphiqueInitialise(int fond)
 	{
@@ -73,6 +81,13 @@ int graphiqueInitialise(int fond)
 	Uint32 clrFond = SDL_MapRGB(affichage->format, fond, fond, fond);
 	SDL_FillRect(affichage, NULL, clrFond);
 
+	return 0;
+	}
+
+int graphiqueNettoyage(int couleurFond)
+	{
+	Uint32 couleurF=SDL_MapRGB(affichage->format,couleurFond,couleurFond,couleurFond);
+	SDL_FillRect(affichage, NULL, couleurF);
 	return 0;
 	}
 
@@ -240,19 +255,15 @@ void graphiqueMasse(int abs, int ord, Uint32 couleur)
 void graphiquePendule(grapheT * graphe)
 	{
 	int Mx, My, Nx, Ny;
-		//fprintf(stderr, " Initialisation du graphe\n");
-		// Couleur fond
-	Uint32 couleurF=SDL_MapRGB(affichage->format,(*graphe).fond,(*graphe).fond,(*graphe).fond);
 
+		// Position des extrémités
 	Mx = (*graphe).supporX[12]; My = (*graphe).supporY[12];
 	Nx = (*graphe).supporX[13]; Ny = (*graphe).supporY[13];
 
-	  //	Suppression de l'ancien graphe
-
-	SDL_FillRect(affichage, NULL, couleurF);
-
-		// Chaine de pendule
+		// Axe de la chaîne
 	graphiqueLigneContraste(Nx, Ny, Mx, My);
+
+		// Chaîne de pendule
 	graphiqueMobile(graphe);
 
 	return;
@@ -262,7 +273,7 @@ void graphiquePenduleSupport(grapheT * graphe)
 	{
 		//fprintf(stderr, " Initialisation du graphe\n");
 		// Couleur fond
-	Uint32 couleurF=SDL_MapRGB(affichage->format,(*graphe).fond,(*graphe).fond,(*graphe).fond);
+	//Uint32 couleurF=SDL_MapRGB(affichage->format,(*graphe).fond,(*graphe).fond,(*graphe).fond);
 
 //                                                J   I
 //                                             L   K
@@ -280,11 +291,7 @@ void graphiquePenduleSupport(grapheT * graphe)
 	int Ax, Ay, Bx, By;//, Cx, Cy, Dx, Dy;
 	int Ex, Ey, Fx, Fy, Gx, Gy, Hx, Hy;
 	int Ix, Iy, Jx, Jy, Kx, Ky, Lx, Ly;
-	int Mx, My, Nx, Ny;
-
-	  //	Suppression de l'ancien graphe
-
-	SDL_FillRect(affichage, NULL, couleurF);
+	int Nx, Ny;// Mx, My,
 
 		//	Point du support
 	//Xp = (*chaine).abscisFix[0]; Yp = (*chaine).ordonnFix[0];
@@ -300,11 +307,11 @@ void graphiquePenduleSupport(grapheT * graphe)
 	Jx = (*graphe).supporX[9]; Jy = (*graphe).supporY[9];
 	Kx = (*graphe).supporX[10]; Ky = (*graphe).supporY[10];
 	Lx = (*graphe).supporX[11]; Ly = (*graphe).supporY[11];
-	Mx = (*graphe).supporX[12]; My = (*graphe).supporY[12];
+	//Mx = (*graphe).supporX[12]; My = (*graphe).supporY[12];
 	Nx = (*graphe).supporX[13]; Ny = (*graphe).supporY[13];
 
 
-			// Boitier moteur et montant avant	
+			// Boitier moteur et montant avant
 	if((*graphe).arriere <= 0) // Vue de devant
 		{
 			// Boitier moteur	
@@ -346,8 +353,9 @@ void graphiquePenduleSupport(grapheT * graphe)
 		}
 
 		// Chaine de pendule
-	graphiqueLigneContraste(Nx, Ny, Mx, My);
-	graphiqueMobile(graphe);
+	//graphiqueLigneContraste(Nx, Ny, Mx, My);
+	//graphiqueMobile(graphe);
+	graphiquePendule(graphe);
 
 
 			// Boitier moteur et montant avant	
@@ -362,7 +370,6 @@ void graphiquePenduleSupport(grapheT * graphe)
 			{
 			graphiqueRectangle(Fx, Fy, Hx, Hy, Jx, Jy, Lx, Ly);
 			}
-
 			// Face arrière
 		graphiqueRectangle(Hx, Hy, Gx, Gy, Ix, Iy, Jx, Jy);
 
@@ -433,7 +440,7 @@ void graphiqueMobile(grapheT * graphe)
 
 	do	//	Dessin des points avants
 		{
-		if(iter->position > 1)
+		if(iter->position > 0)
 			{
 			graphAbs=iter->xm;
 			graphOrd=iter->ym;
