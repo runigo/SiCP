@@ -154,7 +154,10 @@ void graphiqueTriangleGris(int X, int Y, int Ax, int Ay, int Bx, int By)
 	{
 	int x[3];
 	int y[3];
-	float a, b, c, d;
+	float a = 0.0;
+	float b = 0.0;
+	float c = 0.0;
+	float d = 0.0;
 
 	Uint32 couleurG = SDL_MapRGB(affichage->format, 127, 127, 127);
 
