@@ -1,7 +1,7 @@
 /*
-Copyright septembre 2017, Stephan Runigo
+Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.3.7  simulateur de chaîne de pendules
+SiCP 1.5  simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -11,16 +11,16 @@ de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 En contrepartie de l'accessibilité au code source et des droits de copie,
 de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+offert aux utilisateurs qu'une garantie limitée. Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
+associés au chargement, à l'utilisation, à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des  connaissances  informatiques approfondies. Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation du
+avertis possédant des connaissances informatiques approfondies. Les
+utilisateurs sont donc invités à charger et tester l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
@@ -32,7 +32,7 @@ termes.
 #include "options.h"
 
 void optionsDt(optionsT * options, char *opt);
-void optionsEquation(optionsT * options, char *opt);
+//void optionsEquation(optionsT * options, char *opt);
 void optionsFond(optionsT * options, char *opt);
 void optionsSupport(optionsT * options, char *opt);
 void optionsNombre(optionsT * options, char *opt);
@@ -62,8 +62,8 @@ int optionsTraitement(optionsT * options, int nb, char *opt[])
 		if(strcmp(opt[i], "support")==0 && opt[i+1]!=NULL)
 			optionsSupport(options, opt[i+1]);	// Avec ou sans support
 
-		if(strcmp(opt[i], "equation")==0 && opt[i+1]!=NULL)
-			optionsEquation(options, opt[i+1]);	// choix de l'équation
+		//if(strcmp(opt[i], "equation")==0 && opt[i+1]!=NULL)
+			//optionsEquation(options, opt[i+1]);	// choix de l'équation
 		if(strcmp(opt[i], "dt")==0 && opt[i+1]!=NULL)
 			optionsDt(options, opt[i+1]);	// discrétisation du temps
 
@@ -100,7 +100,7 @@ void optionsNombre(optionsT * options, char *opt)
 	else
 		{
 		printf("Option nombre non valide, nombre = %d\n", (*options).nombre);
-		printf("Option nombre : 0.0 < nombre < %d\n", NOMBRE_MAX);
+		printf("	option nombre : 0.0 < nombre < %d\n", NOMBRE_MAX);
 		}
 	return;
 	}
@@ -109,7 +109,9 @@ void optionsNombre(optionsT * options, char *opt)
 void optionsSoliton(optionsT * options, char *opt)
 	{
 	int soliton = atoi(opt);
-	if(soliton > -SOLITON_MAX && soliton <SOLITON_MAX)
+	int solitonMax = (int)(0.1 + DEPHASAGE_MAX/DEUXPI);
+
+	if(soliton > -solitonMax && soliton < solitonMax)
 		{
 		(*options).soliton = soliton;// * 2 * PI
 		printf("Option soliton valide, soliton = %d\n", (*options).soliton);
@@ -117,7 +119,7 @@ void optionsSoliton(optionsT * options, char *opt)
 	else
 		{
 		printf("Option soliton non valide, soliton = %d\n", (*options).soliton);
-		printf("Option e : 1 < soliton < 5\n");
+		printf("	option soliton : %d < soliton < %d\n", -solitonMax, solitonMax);
 		}
 	return;
 	}
@@ -134,7 +136,7 @@ void optionsDt(optionsT * options, char *opt)
 	else
 		{
 		printf("Option dt non valide, dt = %f\n", (*options).dt);
-		printf("Option dt : 0.0 < dt < %f\n", DT_MAX);
+		printf("	option dt : %f < dt < %6.3f\n",DT_MIN , DT_MAX);
 		}
 	return;
 	}
@@ -151,7 +153,7 @@ void optionsEquation(optionsT * options, char *opt)
 	else
 		{
 		printf("Option equation non valide, equation = %d\n", (*options).equation);
-		printf("Option equation : 1 < equation < 5\n");
+		printf("	option equation : 1 < equation < 5\n");
 		}
 	return;
 	}
@@ -169,7 +171,7 @@ void optionsFond(optionsT * options, char *opt)
 	else
 		{
 		printf("Option fond non valide, fond = %d\n", (*options).fond);
-		printf("Option fond : 0 < fond < 255\n");
+		printf("	option fond : 0 < fond < 255\n");
 		}
 	return;
 	}
@@ -186,7 +188,7 @@ void optionsPause(optionsT * options, char *opt)
 	else
 		{
 		printf("Option pause non valide, pause = %d\n", (*options).pause);
-		printf("Option pause : 5 < pause < 555\n");
+		printf("	option pause : 5 < pause < 555\n");
 		}
 	return;
 	}
@@ -203,7 +205,7 @@ void optionsSupport(optionsT * options, char *opt)
 	else
 		{
 		printf("Option mode non valide, support = %d\n", (*options).support);
-		printf("Option support = 1 ou 0 : avec ou sans support\n");
+		printf("	option support = 1 ou 0 : avec ou sans support\n");
 		}
 	return;
 	}
@@ -220,7 +222,7 @@ void optionsMode(optionsT * options, char *opt)
 	else
 		{
 		printf("Option mode non valide, mode = %d\n", (*options).mode);
-		printf("Option mode : mode = + ou - 1\n");
+		printf("	option mode : mode = + ou - 1\n");
 		}
 	return;
 	}
@@ -236,7 +238,7 @@ void optionsDuree(optionsT * options, char *opt)
 	else
 		{
 		printf("Option duree non valide, duree = %d\n", (*options).duree);
-		printf("Option duree : 0.0 < duree < %d\n", DUREE_MAX);
+		printf("	option duree : 0 < duree < %d\n", DUREE_MAX);
 		}
 	return;
 	}
@@ -253,41 +255,34 @@ void optionsThread(optionsT * options, char *opt)
 	else
 		{
 		printf("Option thread non valide, thread = %d\n", (*options).thread);
-		printf("Option thread : thread = 0 ou 1\n");
+		printf("	option thread : thread = 0 ou 1\n");
 		}
 	return;
 	}
 
 void optionsAide(void)
 	{
-	printf("\n\nAide de SiCP\n\n");
+	printf("\nAIDE DE SiCP\n");
 
-	printf("Options et commande du simulateur de chaîne de pendule\n\n");
+	printf("\n	OPTIONS DE LA LIGNE DE COMMANDE ()\n\n");
 
   // Couleur du fond 
 	printf("fond	0 < fond < 255	:	couleur du fond de l'affichage\n");
-	printf("		Fond noir : 0, fond blanc : 255\n\n");
-	printf("support = 1 ou 0 : avec ou sans support\n");
+	printf("support	1 ou 0 		: 	avec ou sans dessin du support\n");
 	printf("pause	5 < pause < 555	:	pause entre les affichages en ms\n");
-	printf("mode	mode = -1 ou 1	:	Avec ou sans attente\n");  // Mode -1 : Wait, 1 : Poll
-	printf("	entrée : change le mode\n\n");
-
-	printf("duree	1 < duree < %d	:	nombre d'évolution du système entre les affichages\n", DUREE_MAX);
-	printf("	F1, F2 : augmenter, diminuer le nombre d'évolution du système entre les affichages\n\n");
-
-	printf("dt	%f < dt < %f	discrétisation du temps\n", DT_MIN, DT_MAX);
-
+	printf("mode	mode = -1 ou 1	:	Avec ou sans attente (entrée)\n");  // Mode -1 : Wait, 1 : Poll
+	printf("duree	1 < duree < %d	:	nombre d'évolution du système entre les affichages (F9, F10, F11, F12)\n", DUREE_MAX);
+	printf("dt	%f < dt < %6.3f	discrétisation du temps\n", DT_MIN, DT_MAX);
 	printf("nombre	%d < nombre < %d	Nombre de pendule \n", NOMBRE_MIN, NOMBRE_MAX);
+	int soliton = (int)(0.1 + DEPHASAGE_MAX/DEUXPI);
+	printf("soliton	%d < soliton < %d	Nombre de soliton initial (y, h) \n", -soliton, soliton);
 
-	printf("soliton	%d < soliton < %d	Nombre de soliton \n", -SOLITON_MAX, SOLITON_MAX);
-	printf("	y, h : augmenter, diminuer la température\n\n");
-
-	printf("equation	-1 < equation < 5	Équation simulée, \n");
-	printf("		0 : pendule, 1 : harmonique \n");
-	printf("		2 : corde, 3 : dioptre. \n");
+	//printf("equation	-1 < equation < 5	Équation simulée, \n");
+	//printf("		0 : pendule, 1 : harmonique \n");
+	//printf("		2 : corde, 3 : dioptre. \n");
 	//printf("	F9, F10, F11, F12. \n\n");
 
-	printf("COMMANDE CLAVIER\n\n");
+	printf("\n	COMMANDE DU CLAVIER\n\n");
 
 	printf("	a, q : augmenter, diminuer le couplage\n");
 	printf("	z, s : augmenter, diminuer la gravitation\n\n");
@@ -314,12 +309,12 @@ void optionsAide(void)
 	printf("	l : démarre le signal carrée\n");
 	printf("	p, m : augmenter, diminuer la fréquence\n\n");
 
-	printf("	F5 : affiche les observables\n\n");
+	printf("	F5, F6, F7 : affiche les observables\n\n");
 
 	printf("	Entrée : change le mode temporel\n\n");
 
 	printf("	+, - : augmente, diminue la vitesse de la simulation\n");
-	printf("	F1, F2 : diminue, augmente la vitesse de la simulation\n\n");
+	printf("	F9, F10, F11, F12 : diminue, augmente la vitesse de la simulation\n\n");
 
 	printf("Lorsque le bouton de la souris est maintenu, les mouvements de celle-ci\n");
 	printf("permettent la rotation du point de vue de l'observateur.\n\n");

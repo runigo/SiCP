@@ -1,7 +1,7 @@
 /*
 Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4.4 simulateur de chaîne de pendules
+SiCP 1.5 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -11,15 +11,15 @@ de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 En contrepartie de l'accessibilité au code source et des droits de copie,
 de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+offert aux utilisateurs qu'une garantie limitée. Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
+associés au chargement, à l'utilisation, à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des  connaissances  informatiques approfondies. Les
+avertis possédant des connaissances informatiques approfondies. Les
 utilisateurs sont donc invités à charger  et  tester  l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
@@ -51,7 +51,7 @@ termes.
 
 #define DUREE_MAX 999 // Nombre maximal d'incrémentation du système entre deux affichages.
 
-#define DT_MIN 0.0000003 // Discrétisation minimal du temps
+#define DT_MIN 0.000003 // Discrétisation minimal du temps
 #define DT 0.0003
 #define DT_MAX 0.003		//	discrétisation du temps
 //#define DT_MIN 0.000000003	//	discrétisation du temps
@@ -59,7 +59,8 @@ termes.
 #define NOMBRE_MIN 2 // Nombre minimal de pendules
 #define NOMBRE_MAX 1099 // Nombre maximal de pendules
 
-#define SOLITON_MAX 199 // Nombre maximal de soliton
+//#define SOLITON_MAX 19 // Nombre maximal de soliton
+#define DEPHASAGE_MAX 49*DEUXPI // Déphasage maximal
 
 #define COUPLAGE_MAX 99 // Couplage maximal / nombre de pendule
 #define COUPLAGE_MIN 0.003

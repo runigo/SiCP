@@ -32,11 +32,13 @@ Lancer l'exécutable avec d'éventuelles options :
 
 OPTION DE LA LIGNE DE COMMANDE
 
-	dt			0.0 < < 0.3			Discrétisation du temps 
-	equation	0 < < 5				Pendule=1, Harmonique=2, Corde=3, Dioptre=4
-	fond		0 < < 255			Couleur du fond de l'affichage
-	soliton		-99 < < 99 			Nombre de solitons initiales
-	nombre		0 < < 4099			Nombre de pendules
+	aide			Affiche l'aide de SiCP
+
+	fond			Couleur du fond de l'affichage
+	dt			Discrétisation du temps 
+	pause			Pause entre les affichages en ms
+	soliton			Nombre de solitons initiales
+	nombre			Nombre de pendules
 
 UTILISATION
 
@@ -73,17 +75,17 @@ la chaîne.
 	F8 : Graphique avec ou sans support
 	Entrée : change le mode temporel
 
-	+, - : augmente, diminue la vitesse de la simulation
-	F11, F12 : diminue, augmente la vitesse de la simulation
+	F9, F10 : diminuent la vitesse de la simulation
+	F11, F12 : augmentent la vitesse de la simulation
 
 Lorsque le bouton de la souris est maintenu, les mouvements de celle-ci
 permettent la rotation du point de vue de l'observateur.
 
 LICENCE
 
-Copyright novembre 2017, Stephan Runigo
+Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.3.8 simulateur de chaîne de pendules
+SiCP 1.5 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -97,12 +99,12 @@ offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
+associés au chargement, à l'utilisation, à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des  connaissances  informatiques approfondies. Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation du
+avertis possédant des connaissances informatiques approfondies. Les
+utilisateurs sont donc invités à charger et tester l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
