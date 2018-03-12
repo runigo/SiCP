@@ -81,6 +81,7 @@ int donneesOptions(optionsT * options)
 	{
 		// Préréglage des valeurs optionnelles
 
+	(*options).mode = 1;		// avec ou sans attente
 	(*options).duree = 91;		// 100 : temps réèl.
 	(*options).fond=240;		// couleur du fond de l'affichage
 	(*options).support=1;		// Support de la chaîne
