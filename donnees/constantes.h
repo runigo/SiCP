@@ -1,7 +1,7 @@
 /*
 Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.5 simulateur de chaîne de pendules
+SiCP 1.6 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -46,8 +46,7 @@ termes.
 
 #define LARGEUR 999 // Largeur de la fenêtre 990
 #define HAUTEUR 440 // Hauteur de la fenêtre
-#define EPSILON 0.0003 // Valeur minimale de phi afin d'éviter un bug : 0.01 fonctionne
-//#define EPSILON 0.0003 // Valeur minimale de phi afin d'éviter un bug : 0.0003 a été choisi le 6 mars 2018
+#define EPSILON 0.0003 // Valeur minimale de phi afin d'éviter un ancien bug.
 
 #define DUREE_MAX 999 // Nombre maximal d'incrémentation du système entre deux affichages.
 
@@ -65,24 +64,23 @@ termes.
 #define COUPLAGE_MAX 99 // Couplage maximal / nombre de pendule
 #define COUPLAGE_MIN 0.003
 
-//#define GRAVITATION_MAX 666 // Gravitation maximal.
-#define GRAVITATION_MAX 7777
-#define GRAVITATION_MIN 0.00007
+#define GRAVITATION_MAX 7777 // Gravitation maximal.
+#define GRAVITATION_MIN 0.00007 // Gravitation minimal.
 
 #define MASSE_MAX 7777
 #define MASSE_MIN 0.7
 
 #define DISSIPATION_MAX 333	//	Coeficient de frottement visqueux
-#define DISSIPATION_MAX_DT 0.00999
-#define DISSIPATION_MIN 0.0000003
+#define DISSIPATION_MAX_DT 0.00999	//	Valeur maximale
+#define DISSIPATION_MIN 0.0000003	//	Valeur minimale
 
-#define FREQUENCE_MAX 9123
-#define FREQUENCE_MIN 0.00007
+#define FREQUENCE_MAX 9123	//	Valeur maximale de la fréquence du moteur
+#define FREQUENCE_MIN 0.00007	//	Valeur minimale de la fréquence du moteur
 
-#define AMPLITUDE_MAX 912
-#define AMPLITUDE_MIN 0.00007
+#define AMPLITUDE_MAX 912	//	Valeur maximale de l'amplitude du moteur
+#define AMPLITUDE_MIN 0.00007	//	Valeur minimale de l'amplitude du moteur
 
-#define JOSEPHSON_MAX 912
-#define JOSEPHSON_MIN 0.00007
+#define JOSEPHSON_MAX 912	//	Valeur maximale de l'amplitude du courant josephson
+#define JOSEPHSON_MIN 0.00007	//	Valeur minimale de l'amplitude du courant josephson
 
 #endif

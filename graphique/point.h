@@ -1,7 +1,7 @@
 /*
 Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4.4 simulateur de chaîne de pendules
+SiCP 1.6 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -37,19 +37,17 @@ termes.
 typedef struct PointsT pointsT;
 	struct PointsT
 		{
-		// point suivant
-		struct PointsT *suivant;
+		struct PointsT *suivant;	// point suivant
 
-	
+		struct PointsT *precedent;	// point précédent
+
 		vecteurT masse;	// Coordonnees 3D de la masse
+
 		int xm;		// Absisse 2D de la masse
 		int ym;		// Ordonnée 2D de la masse
 
-			// Position du point :  derrière < 0, devant > 0
-		float position;
-
-	
 		vecteurT axe;	// Coordonnees 3D de l'axe
+
 		int xa;		// Absisse 2D de l'axe
 		int ya;		// Ordonnée 2D de l'axe
 		};

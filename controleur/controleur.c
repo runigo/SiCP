@@ -1,7 +1,7 @@
 /*
 Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.5 simulateur de chaîne de pendules
+SiCP 1.6 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -60,14 +60,15 @@ int controleurSimulationGraphique(controleurT * control)
 			//fprintf(stderr, "Projection du systeme sur la représentation graphique\n");
 		controleurEvolutionSysteme(control);
 
-			//fprintf(stderr, "Mise à jourde la fenêtre graphique et pause\n");
+			//fprintf(stderr, "Mise à jour de la fenêtre graphique et pause\n");
 		controleurConstructionGraphique(control);
 
 			//fprintf(stderr, "Prise en compte des actions clavier\n");
 		controleurActionClavier(control);
 
+		if((*control).evenement.type == SDL_QUIT) (*control).sortie = 1;
 		}
-	while((*control).evenement.type != SDL_QUIT);
+	while((*control).sortie == 0);
 
 	return 0;
 	}
@@ -82,7 +83,7 @@ int controleurProjection(controleurT * control)
 int controleurEvolutionSysteme(controleurT * control)
 	{
 		//fprintf(stderr, "Evolution temporelle du systeme\n");
-	systemeEvolution(&(*control).systeme, (*control).duree);
+	systemeEvolution(&(*control).systeme, (*control).options.duree);
 
 	return 0;
 	}
@@ -116,7 +117,7 @@ int controleurActionClavier(controleurT * control)
 	{
 	int sortie = 0;
 		//fprintf(stderr, "Traitement des évenements, mode %d\n", (*control).mode);
-	if((*control).mode<0)
+	if((*control).options.mode<0)
 		{
 				// Attente d'un évenement SDL
 		if(SDL_WaitEvent(&(*control).evenement))
@@ -146,8 +147,8 @@ int controleurTraiteEvenement(controleurT * control)
 	int sortie = 0;
 	switch((*control).evenement.type)
 		{
-		case SDL_QUIT:
-			sortie = 1;break;
+		//case SDL_QUIT:
+			//sortie = 1;break;
 		case SDL_MOUSEMOTION:
 			sortie = controleurSouris(control);break;
 		case SDL_MOUSEBUTTONDOWN:
@@ -163,8 +164,8 @@ int controleurTraiteEvenement(controleurT * control)
 				}
 			else
 				{
-				if ((((*control).evenement.key.keysym.mod & KMOD_LSHIFT) == KMOD_LCTRL)
-				|| (((*control).evenement.key.keysym.mod & KMOD_RSHIFT) == KMOD_RCTRL))
+				if ((((*control).evenement.key.keysym.mod & KMOD_LCTRL) == KMOD_LCTRL)
+				|| (((*control).evenement.key.keysym.mod & KMOD_RCTRL) == KMOD_RCTRL))
 					{
 					sortie = controleurClavierCtrl(control);break;
 					}
@@ -209,28 +210,28 @@ int controleurTraiteEvenement(controleurT * control)
 */
 void controleurChangeMode(controleurT * control)
 	{
-	(*control).mode=-(*control).mode;
+	(*control).options.mode=-(*control).options.mode;
 
 	return;
 	}
 
 void controleurChangeVitesse(controleurT * control, float facteur)
 	{
-	if( (*control).duree > 11 )
+	if( (*control).options.duree > 11 )
 		{
-		(*control).duree = (*control).duree * facteur;
+		(*control).options.duree = (*control).options.duree * facteur;
 		}
 	else
 		{
 		if( facteur > 1)
 			{
-			(*control).duree ++;
+			(*control).options.duree ++;
 			}
 		else
 			{
-			if( (*control).duree > 1 )
+			if( (*control).options.duree > 1 )
 				{
-				(*control).duree --;
+				(*control).options.duree --;
 				}
 			else
 				{
@@ -239,12 +240,12 @@ void controleurChangeVitesse(controleurT * control, float facteur)
 			}
 		}
 
-	if( (*control).duree > DUREE_MAX)
+	if( (*control).options.duree > DUREE_MAX)
 		{
 		fprintf(stderr, "duree maximale atteinte, ");
-		(*control).duree = DUREE_MAX;
+		(*control).options.duree = DUREE_MAX;
 		}
-	fprintf(stderr, "duree = %d\n", (*control).duree);
+	fprintf(stderr, "duree = %d\n", (*control).options.duree);
 	return;
 	}
 
@@ -253,8 +254,8 @@ int controleurClavier(controleurT * control)
 	switch ((*control).evenement.key.keysym.sym)
 		{
 	// Sortie
-		case SDLK_ESCAPE:
-			(*control).sortie = 1;break;
+		//case SDLK_ESCAPE:
+			//(*control).sortie = 1;break;
 
 	// Mode : attente d'un evenement / pas d'attente
 		case SDLK_RETURN:

@@ -1,7 +1,7 @@
 /*
 Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4.4 simulateur de chaîne de pendules
+SiCP 1.6 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -11,16 +11,16 @@ de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 En contrepartie de l'accessibilité au code source et des droits de copie,
 de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+offert aux utilisateurs qu'une garantie limitée. Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
+associés au chargement, à l'utilisation, à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des  connaissances  informatiques approfondies. Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation du
+avertis possédant des connaissances informatiques approfondies. Les
+utilisateurs sont donc invités à charger et tester l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
@@ -69,26 +69,17 @@ int projectionChangePhi(projectionT * projection, float x)
 	psi = (*projection).pointDeVue.psi;
 	phi = (*projection).pointDeVue.phi + x;
 
-		// phi ne se raproche pas trop de PI afin d'éviter un bug
+		// phi reste inférieur à PI
 	if(phi > PI-EPSILON)
 		{
 		phi = PI-EPSILON;
 		}
 
-		// phi ne se raproche pas trop de zéro afin d'éviter un bug
+		// phi reste supérieur à zéro
 	if(phi < EPSILON)
 		{
 		phi = EPSILON;
 		}
-
-		// phi ne se raproche pas trop de PI/2 afin d'éviter un bug
-	/*
-	if(phi > PI/2 - EPSILON && phi < PI/2 + EPSILON)
-		{
-		if(phi > 0.0) phi = PI/2 + EPSILON;
-		else phi = PI/2 - EPSILON;
-		}
-	//*/
 
 	vecteurInitialisePolaire(&(*projection).pointDeVue, r, psi, phi);
 	vecteurInitialiseVecteurPhi(&(*projection).pointDeVue, &(*projection).vecteurPhi, (*projection).perspective);
@@ -302,8 +293,8 @@ int projectionPerspectiveChaine(projectionT * projection, grapheT * graphe)
 		iterGraph->xm = centrageX + vecteurScalaireCartesien(&v, &(*projection).vecteurPsi);
 		iterGraph->ym = centrageY + vecteurScalaireCartesien(&v, &(*projection).vecteurPhi);
 
-			// Position avant ou arrière de la masse
-		iterGraph->position = iterGraph->masse.y * (*projection).pointDeVue.y;
+			// Position avant ou arrière de la masse SUPPRIMÉ DANS SiCP 1.5.1
+		//iterGraph->position = iterGraph->masse.y * (*projection).pointDeVue.y;
 
 			// Coordonnees 2D de l'axe
 		vecteurDifferenceCartesien(&(iterGraph->axe), &(*projection).pointDeVue, &v);

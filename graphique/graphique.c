@@ -1,7 +1,7 @@
 /*
 Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4.4 simulateur de chaîne de pendules
+SiCP 1.6 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -146,7 +146,6 @@ void graphiqueLigneContraste(int Xp, int Yp, int Mx, int My)
 	{
 	Uint32 couleurC = SDL_MapRGB(affichage->format, 0, 0, 0);
 	graphiqueLigneDroite(Xp, Yp, Mx, My, couleurC);
-	//graphiqueDisque(Mx, My, 2, couleurC);
 	return;
 	}
 
@@ -192,17 +191,13 @@ void graphiqueTriangleGris(int X, int Y, int Ax, int Ay, int Bx, int By)
 		c=(float)(x[2]-x[0])/(y[2]-y[0]); d=x[0]-c*y[0];
 
 	for(i=y[0];i<=y[1];i++)
-		//{graphiqueTige(a*i+b, i, c*i+d, i, couleurG);}
 		{graphiqueLigneDroite(a*i+b, i, c*i+d, i, couleurG);}
-	//graphiqueLigneDroite(a*i+b+1, i+1, c*i+d+1, i+1, couleurG);
 
 	if(y[1]!=y[2])
 		a=(float)(x[2]-x[1])/(y[2]-y[1]); b=x[1]-a*y[1];
 
 	for(i=y[1];i<=y[2];i++)
-		//{graphiqueTige(a*i+b, i, c*i+d, i, couleurG);}
 		{graphiqueLigneDroite(a*i+b, i, c*i+d, i, couleurG);}
-	//graphiqueLigneDroite(a*i+b+1, i+1, c*i+d+1, i+1, couleurG);
 
 	return;
 	}
@@ -223,10 +218,6 @@ void graphiqueRectangle(int Ax, int Ay, int Bx, int By, int Cx, int Cy, int Dx, 
 
 	graphiqueTriangleGris(Ax, Ay, Bx, By, Cx, Cy);
 	graphiqueTriangleGris(Ax, Ay, Cx, Cy, Dx, Dy);
-
-	//Uint32 couleurG = SDL_MapRGB(affichage->format, 127, 127, 127);
-	//graphiqueLigneDroite(Bx, By, Dx, Dy, couleurG);
-	//graphiqueLigneDroite(Cx, Cy, Ax, Ay, couleurG);
 
 	graphiqueLigneDroite(Bx, By, Ax, Ay, couleurC);
 	graphiqueLigneDroite(Dx, Dy, Ax, Ay, couleurC);
@@ -274,10 +265,6 @@ void graphiquePendule(grapheT * graphe)
 
 void graphiquePenduleSupport(grapheT * graphe)
 	{
-		//fprintf(stderr, " Initialisation du graphe\n");
-		// Couleur fond
-	//Uint32 couleurF=SDL_MapRGB(affichage->format,(*graphe).fond,(*graphe).fond,(*graphe).fond);
-
 //                                                J   I
 //                                             L   K
 //                                               M
@@ -290,18 +277,15 @@ void graphiquePenduleSupport(grapheT * graphe)
 //             D   C
 //         B   A
 
-	//int i, x, y, X, Y;, Xp, Yp;
-	int Ax, Ay, Bx, By;//, Cx, Cy, Dx, Dy;
+	int Ax, Ay, Bx, By;
 	int Ex, Ey, Fx, Fy, Gx, Gy, Hx, Hy;
 	int Ix, Iy, Jx, Jy, Kx, Ky, Lx, Ly;
-	int Nx, Ny;// Mx, My,
+	int Nx, Ny;
 
 		//	Point du support
-	//Xp = (*chaine).abscisFix[0]; Yp = (*chaine).ordonnFix[0];
 	Ax = (*graphe).supporX[0]; Ay = (*graphe).supporY[0];
 	Bx = (*graphe).supporX[1]; By = (*graphe).supporY[1];
-	//Cx = (*graphe).supporX[2]; Cy = (*graphe).supporY[2];
-	//Dx = (*graphe).supporX[3]; Dy = (*graphe).supporY[3];
+
 	Ex = (*graphe).supporX[4]; Ey = (*graphe).supporY[4];
 	Fx = (*graphe).supporX[5]; Fy = (*graphe).supporY[5];
 	Gx = (*graphe).supporX[6]; Gy = (*graphe).supporY[6];
@@ -310,11 +294,11 @@ void graphiquePenduleSupport(grapheT * graphe)
 	Jx = (*graphe).supporX[9]; Jy = (*graphe).supporY[9];
 	Kx = (*graphe).supporX[10]; Ky = (*graphe).supporY[10];
 	Lx = (*graphe).supporX[11]; Ly = (*graphe).supporY[11];
-	//Mx = (*graphe).supporX[12]; My = (*graphe).supporY[12];
+
 	Nx = (*graphe).supporX[13]; Ny = (*graphe).supporY[13];
 
 
-			// Boitier moteur et montant avant
+		// Boitier moteur et montant avant
 	if((*graphe).arriere <= 0) // Vue de devant
 		{
 			// Boitier moteur	
@@ -356,12 +340,9 @@ void graphiquePenduleSupport(grapheT * graphe)
 		}
 
 		// Chaine de pendule
-	//graphiqueLigneContraste(Nx, Ny, Mx, My);
-	//graphiqueMobile(graphe);
 	graphiquePendule(graphe);
 
-
-			// Boitier moteur et montant avant	
+		// Boitier moteur et montant avant	
 	if((*graphe).arriere > 0) // Vue de derrière
 		{
 			// Boitier moteur	
@@ -405,77 +386,47 @@ void graphiquePenduleSupport(grapheT * graphe)
 
 void graphiqueMobile(grapheT * graphe)
 	{
+	int graphAbs, graphOrd, fixAbs, fixOrd;
+	int sortie=0;
 	pointsT *iter=(*graphe).premier;
+
+	if((*graphe).arriere != 0) // Vue de derrière, la chaîne est dessinée vers les précédents.
+		{iter = iter->precedent;}
+	else {(*graphe).arriere = 0;}
 
 		// Couleur segments et points
 	Uint32 couleurS=SDL_MapRGB(affichage->format, (*graphe).rouge, (*graphe).vert, (*graphe).bleu);
 	Uint32 couleurP=SDL_MapRGB(affichage->format, (*graphe).vert, (*graphe).rouge, (*graphe).bleu);
 
-	int graphAbs, graphOrd, fixAbs, fixOrd;
 
-	do	//	Dessin des points arrières
+	do
 		{
-		if(iter->position < 0)
-			{
-			graphAbs=iter->xm;
-			graphOrd=iter->ym;
-
-			graphiqueMasse(graphAbs, graphOrd, couleurP);
-			}
-
-		iter=iter->suivant;
-		}
-	while(iter!=(*graphe).premier);
-
-	do	//	Dessin des segments
-		{
+		//	Dessin des segments
 		fixAbs=iter->xa;
 		fixOrd=iter->ya;
-
 		graphAbs=iter->xm;
 		graphOrd=iter->ym;
-
 		graphiqueTige(fixAbs, fixOrd, graphAbs, graphOrd, couleurS);
 
-		iter=iter->suivant;
+		//	Dessin des masses
+		graphAbs=iter->xm;
+		graphOrd=iter->ym;
+		graphiqueMasse(graphAbs, graphOrd, couleurP);
+
+		if((*graphe).arriere == 0)
+			{iter=iter->suivant;}
+		else // Vue de derrière, la chaîne est dessinée vers les précédents.
+			{iter=iter->precedent;}
+
+
+		if((*graphe).arriere == 0)
+			{if(iter==(*graphe).premier) sortie = 1;}
+		else // Vue de derrière, la chaîne est dessinée vers les précédents.
+			{if(iter==(*graphe).premier->precedent) sortie = 1;}
 		}
-	while(iter!=(*graphe).premier);
-
-	do	//	Dessin des points avants
-		{
-		if(iter->position > 0)
-			{
-			graphAbs=iter->xm;
-			graphOrd=iter->ym;
-
-			graphiqueMasse(graphAbs, graphOrd, couleurP);
-			}
-
-		iter=iter->suivant;
-		}
-	while(iter!=(*graphe).premier);
+	while(sortie==0);
 
 	return;
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-void graphiqueTige(int X, int Y, int x, int y, Uint32 couleur)
-	{
-	int i, abs, ord;
-	int p=50;
-	float a;
-	for(i=0;i<p;i++)
-		{
-		a=i/(float)p;
-		abs=(X+(int)(a*(x-X)));
-		ord=(Y+(int)(a*(y-Y)));
-		graphiqueAffichePixelVerif(abs, ord, couleur);
-		graphiqueAffichePixelVerif(abs+1, ord, couleur);
-		graphiqueAffichePixelVerif(abs-1, ord, couleur);
-		graphiqueAffichePixelVerif(abs, ord+1, couleur);
-		graphiqueAffichePixelVerif(abs, ord-1, couleur);
-		}
-	return;
-	}
-*/

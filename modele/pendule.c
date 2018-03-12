@@ -1,7 +1,7 @@
 /*
-Copyright novembre 2017, Stephan Runigo
+Copyright mars 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4.1 simulateur de chaîne de pendules
+SiCP 1.6 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -11,16 +11,16 @@ de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 En contrepartie de l'accessibilité au code source et des droits de copie,
 de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée. Pour les mêmes raisons,
+offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
 seule une responsabilité restreinte pèse sur l'auteur du programme, le
 titulaire des droits patrimoniaux et les concédants successifs.
 A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement, à l'utilisation, à la modification et/ou au
+associés au chargement,  à l'utilisation,  à la modification et/ou au
 développement et à la reproduction du logiciel par l'utilisateur étant
 donné sa spécificité de logiciel libre, qui peut le rendre complexe à
 manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant des connaissances informatiques approfondies. Les
-utilisateurs sont donc invités à charger et tester l'adéquation du
+avertis possédant  des  connaissances  informatiques approfondies. Les
+utilisateurs sont donc invités à charger  et  tester  l'adéquation du
 logiciel à leurs besoins dans des conditions permettant d'assurer la
 sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
@@ -39,7 +39,7 @@ double vitessePendul(penduleT * pendul);
 	// Somme des forces
 double forcesPendul(penduleT * pendul, int choix, float courantJosephson);
 
-// Variation des parametres reduits
+	// Variation des parametres reduits
 void changeAlpha(penduleT * pendul, float facteur);
 void changeKapa(penduleT * pendul, float facteur);
 void changeGamma(penduleT * pendul, float facteur);
@@ -176,25 +176,29 @@ void penduleAjouteDephasage(penduleT * pendul, float dephasage)
 // Evolution temporelle du pendule
 
 void penduleIncremente(penduleT * pendul)
-	{// incremente la position
+	{
+		// incrementation des positions
 	((*pendul).ancien)=((*pendul).actuel);
 	((*pendul).actuel)=((*pendul).nouveau);
 	return;
 	}
 
 void penduleInertie(penduleT * pendul, int choix, float courantJosephson)
-	{// application du principe d'inertie
+	{
+		// application du principe d'inertie
 	(*pendul).nouveau = forcesPendul(pendul, choix, courantJosephson) + 2*((*pendul).actuel) - (*pendul).ancien;
 	return;
 	}
 
 double forcesPendul(penduleT * pendul, int choix, float courantJosephson)
-	{// somme des forces sur le pendule
+	{
+		// somme des forces sur le pendule
 	return ((*pendul).forceCouplage + gravitationPendul(pendul, choix) + ((*pendul).alpha)*vitessePendul(pendul) + courantJosephson);
 	}
 
 void penduleCouplage(penduleT * m1, penduleT * m2, penduleT * m3)
-	{// calcul des forces de couplage
+	{
+		// calcul des forces de couplage
 	double gauche, droite;
 
 	gauche = (*m1).kapa * ( (*m2).actuel - (*m1).actuel + (*m1).dephasage );
@@ -206,8 +210,13 @@ void penduleCouplage(penduleT * m1, penduleT * m2, penduleT * m3)
 	}
 
 double gravitationPendul(penduleT * pendul, int choix)
-	{// Calcul de la FORCE DE RAPPEL
+	{
+		// Calcul de la FORCE DE RAPPEL
 	double forceRappel;
+
+	forceRappel = (*pendul).gamma * sin((*pendul).actuel);
+
+/*		SUPPRIMÉ DANS SiCP 1.5.1
 	switch(choix)
 		{
 		case 1:// gravitation
@@ -223,17 +232,22 @@ double gravitationPendul(penduleT * pendul, int choix)
 			forceRappel = 0.0;
 		break;
 		}
+*/
+	(void)choix;
+
 	return forceRappel;
 	}
 
 double vitessePendul(penduleT * pendul)
-	{// Retourne vdt
+	{
+		// Retourne vdt
 	return (*pendul).actuel - (*pendul).ancien;
 	}
 
 
 void penduleAffiche(penduleT * pendul)
-	{// Affichage de la position et des parametres
+	{
+		// Affichage des positions et des parametres
 	printf("   ancien    %f\n",(*pendul).ancien);
 	printf("   actuel    %f\n",(*pendul).actuel);
 	printf("   nouveau   %f\n",(*pendul).nouveau);
