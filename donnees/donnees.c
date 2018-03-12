@@ -91,7 +91,7 @@ int donneesOptions(optionsT * options)
 	(*options).dt=0.0003;		// discrétisation du temps
 							// 25 images par seconde, SDL_Delay(30);
 							// dt*duree = 0.004
-	(*options).pause=25;		// temps de pause SDL en ms
+	(*options).pause=15;		// temps de pause SDL en ms
 
 	(*options).soliton=4;
 							
@@ -128,7 +128,7 @@ int donneesSysteme(systemeT * systeme, optionsT * options)
 	(*systeme).gravitation = 9.81;
 	(*systeme).masse = 1.0;
 	(*systeme).longueur = 9.81/4/PI/PI; // = 25 cm => période = 1 s
-	(*systeme).dissipation = 0.3;
+	(*systeme).dissipation = 0.07;
 	(*systeme).couplage = 11.1 * (*systeme).nombre;
 	(*systeme).dephasage = (*options).soliton * 2 * PI;
 
