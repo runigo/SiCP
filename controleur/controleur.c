@@ -1,7 +1,7 @@
 /*
-Copyright mars 2018, Stephan Runigo
+Copyright avril 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.6 simulateur de chaîne de pendules
+SiCP 1.7 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -51,46 +51,36 @@ void controleurChangeVitesse(controleurT * control, float facteur);
 
 int controleurSimulationGraphique(controleurT * control)
 	{
-
-	//fprintf(stderr, "Entrée dans la boucle SDL\n");
+		//fprintf(stderr, "Entrée dans la boucle SDL\n");
 	do	{
-			//fprintf(stderr, "Projection du systeme sur la représentation graphique\n");
-		controleurProjection(control);
-
-			//fprintf(stderr, "Projection du systeme sur la représentation graphique\n");
-		controleurEvolutionSysteme(control);
-
-			//fprintf(stderr, "Mise à jour de la fenêtre graphique et pause\n");
-		controleurConstructionGraphique(control);
-
 			//fprintf(stderr, "Prise en compte des actions clavier\n");
 		controleurActionClavier(control);
-
-		if((*control).evenement.type == SDL_QUIT) (*control).sortie = 1;
 		}
 	while((*control).sortie == 0);
 
 	return 0;
 	}
 
-int controleurProjection(controleurT * control)
+int controleurEvolution(controleurT * control)
 	{
-	projectionSystemChaineDePendule(&(*control).systeme, &(*control).projection, &(*control).graphe);
-	//projectionSystemPendule(&(*control).systeme, &(*control).graphe);
-	return (*control).sortie;
-	}
+	//printf("Entrée dans controleurEvolution, SDL_GetTicks() = %d\n",(int)(SDL_GetTicks()));
 
-int controleurEvolutionSysteme(controleurT * control)
-	{
+		//fprintf(stderr, "Projection du systeme sur la représentation graphique\n");
+	projectionSystemChaineDePendule(&(*control).systeme, &(*control).projection, &(*control).graphe);
+
 		//fprintf(stderr, "Evolution temporelle du systeme\n");
 	systemeEvolution(&(*control).systeme, (*control).options.duree);
 
-	return 0;
+		//fprintf(stderr, "Mise à jour de la fenêtre graphique et pause\n");
+	controleurConstructionGraphique(control);
+
+	//printf("Sortie de controleurEvolution, SDL_GetTicks() = %d\n",(int)(SDL_GetTicks()));
+
+	return (*control).sortie;
 	}
 
 int controleurConstructionGraphique(controleurT * control)
 	{
-
 		//fprintf(stderr, "Nettoyage de l'affichage\n");
 	graphiqueNettoyage((*control).graphe.fond);
 
@@ -117,27 +107,22 @@ int controleurActionClavier(controleurT * control)
 	{
 	int sortie = 0;
 		//fprintf(stderr, "Traitement des évenements, mode %d\n", (*control).mode);
-	if((*control).options.mode<0)
-		{
+	//if((*control).options.mode<0){
 				// Attente d'un évenement SDL
 		if(SDL_WaitEvent(&(*control).evenement))
 			{
 			sortie += controleurTraiteEvenement(control);
 			}
-		}
-	else
-		{
+		//}else{
 			// Sans attente
-		if( SDL_PollEvent(&(*control).evenement) )
-			{
-			sortie += controleurTraiteEvenement(control);
-			}
-		}
+		//if( SDL_PollEvent(&(*control).evenement) )
+			//{sortie += controleurTraiteEvenement(control);}
+		//}
 
 
-	if((*control).evenement.type == SDL_QUIT) sortie += 1;
+	//if((*control).evenement.type == SDL_QUIT) sortie += 1;
 
-	(*control).sortie += sortie;
+	//(*control).sortie += sortie;
 
 	return (*control).sortie;
 	}
@@ -147,14 +132,16 @@ int controleurTraiteEvenement(controleurT * control)
 	int sortie = 0;
 	switch((*control).evenement.type)
 		{
-		//case SDL_QUIT:
-			//sortie = 1;break;
+		case SDL_QUIT:
+			(*control).sortie = 1;break;
 		case SDL_MOUSEMOTION:
 			sortie = controleurSouris(control);break;
 		case SDL_MOUSEBUTTONDOWN:
 			controleurBoutonSouris(control, 1);break;
 		case SDL_MOUSEBUTTONUP:
 			controleurBoutonSouris(control, 0);break;
+		case SDL_USEREVENT:
+			controleurEvolution(control);break;
 	  case SDL_KEYDOWN:
 			{
 			if ((((*control).evenement.key.keysym.mod & KMOD_LSHIFT) == KMOD_LSHIFT)
@@ -254,6 +241,8 @@ int controleurClavier(controleurT * control)
 	switch ((*control).evenement.key.keysym.sym)
 		{
 	// Sortie
+		case SDL_QUIT:
+			(*control).sortie = 1;break;
 		//case SDLK_ESCAPE:
 			//(*control).sortie = 1;break;
 
@@ -296,7 +285,7 @@ int controleurClavier(controleurT * control)
 			changeConditionsLimites(&(*control).systeme, 2); // fixes
 			break;
 		case SDLK_b:
-			fprintf(stderr, "Commande désactivée dans SiCP 1.4.1");
+			fprintf(stderr, "Commande désactivée");
 			//changeConditionsLimites(&(*control).systeme, 3); // libre fixe
 			break;
 		case SDLK_n:

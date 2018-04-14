@@ -1,6 +1,6 @@
-# Copyright juillet 2017, Stephan Runigo
+# Copyright avril 2018, Stephan Runigo
 # runigo@free.fr
-# SiCP 1.3.5  simulateur de chaîne de pendules
+# SiCP 1.7  simulateur de chaîne de pendules
 # Ce logiciel est un programme informatique servant à simuler l'équation 
 # d'une chaîne de pendules et à en donner une représentation graphique.
 # Ce logiciel est régi par la licence CeCILL soumise au droit français et 
@@ -37,8 +37,8 @@ OBJDIR = ./obj
 
 all : $(EXEC)
 
-$(EXEC) : $(OBJDIR)/principale.o $(OBJDIR)/options.o $(OBJDIR)/donnees.o $(OBJDIR)/controleur.o $(OBJDIR)/projection.o $(OBJDIR)/graphique.o $(OBJDIR)/observables.o $(OBJDIR)/graphe.o $(OBJDIR)/point.o $(OBJDIR)/vecteur.o $(OBJDIR)/change.o $(OBJDIR)/systeme.o $(OBJDIR)/moteurs.o $(OBJDIR)/chaine.o $(OBJDIR)/pendule.o
-	$(CC) -g $(OBJDIR)/principale.o $(OBJDIR)/options.o $(OBJDIR)/donnees.o $(OBJDIR)/controleur.o $(OBJDIR)/projection.o $(OBJDIR)/graphique.o $(OBJDIR)/observables.o $(OBJDIR)/graphe.o $(OBJDIR)/point.o $(OBJDIR)/vecteur.o $(OBJDIR)/change.o $(OBJDIR)/systeme.o $(OBJDIR)/moteurs.o $(OBJDIR)/chaine.o $(OBJDIR)/pendule.o `sdl-config --libs` $(LDFLAGS) -o $(EXEC)
+$(EXEC) : $(OBJDIR)/principale.o $(OBJDIR)/options.o $(OBJDIR)/donnees.o $(OBJDIR)/controleur.o $(OBJDIR)/projection.o $(OBJDIR)/temps.o $(OBJDIR)/graphique.o $(OBJDIR)/observables.o $(OBJDIR)/graphe.o $(OBJDIR)/point.o $(OBJDIR)/vecteur.o $(OBJDIR)/change.o $(OBJDIR)/systeme.o $(OBJDIR)/moteurs.o $(OBJDIR)/chaine.o $(OBJDIR)/pendule.o
+	$(CC) -g $(OBJDIR)/principale.o $(OBJDIR)/options.o $(OBJDIR)/donnees.o $(OBJDIR)/controleur.o $(OBJDIR)/projection.o $(OBJDIR)/temps.o $(OBJDIR)/graphique.o $(OBJDIR)/observables.o $(OBJDIR)/graphe.o $(OBJDIR)/point.o $(OBJDIR)/vecteur.o $(OBJDIR)/change.o $(OBJDIR)/systeme.o $(OBJDIR)/moteurs.o $(OBJDIR)/chaine.o $(OBJDIR)/pendule.o `sdl-config --libs` $(LDFLAGS) -o $(EXEC)
 
 $(OBJDIR)/principale.o : controleur/principale.c controleur/principale.h
 	$(CC) -c -g controleur/principale.c $(CFLAGS) -o $@
@@ -54,6 +54,9 @@ $(OBJDIR)/controleur.o : controleur/controleur.c controleur/controleur.h
 
 $(OBJDIR)/projection.o : controleur/projection.c controleur/projection.h
 	$(CC) -c -g controleur/projection.c $(CFLAGS) -o $@
+
+$(OBJDIR)/temps.o : graphique/temps.c graphique/temps.h
+	$(CC) -c -g graphique/temps.c $(CFLAGS) -o $@
 
 $(OBJDIR)/graphique.o : graphique/graphique.c graphique/graphique.h
 	$(CC) -c -g graphique/graphique.c $(CFLAGS) -o $@

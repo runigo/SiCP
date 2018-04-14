@@ -1,7 +1,7 @@
 /*
-Copyright novembre 2017, Stephan Runigo
+Copyright avril 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.4 simulateur de chaîne de pendules
+SiCP 1.7 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -29,39 +29,30 @@ pris connaissance de la licence CeCILL, et que vous en avez accepté les
 termes.
 */
 
-#include "principale.h"
+// Librement inspiré de 
+// http://piconano2015.wixsite.com/soft/code
+// Copyright 2015 par PicoSoft.
 
-int main(int nb, char *opt[])
-	{
-	controleurT control;
+#ifndef _TEMPS_
+#define _TEMPS_
 
-	fprintf(stderr, "\nInitialisations des options\n");
-	assert(donneesOptions(&control.options)==0);
+#include "graphique.h"
 
-	fprintf(stderr, "Traitement des options de la ligne de commande\n");
-	assert(optionsTraitement(&control.options, nb, opt)==0);
+typedef struct TempsT tempsT;
+	struct TempsT
+		{
+		SDL_Event evenement;	// Evenement
+		SDL_TimerID horloge;          // timer principal
+		//int *parametre;
+		long int date;          // la référence de temps du programme (nombre de période timer principal)
+		long int dateActuel;          // 
+		long int datePrecedente;         //
+		};
 
-	fprintf(stderr, "Initialisations et créations\n");
-	assert(donneesControleur(&control)==0);
+Uint32 tempsEvenement(Uint32 it, tempsT * temps);
 
-	fprintf(stderr, "Simulation graphique du système\n");
-	assert(controleurSimulationGraphique(&control)==0);
+int tempsCreation(tempsT * temps);
+int tempsSuppression(tempsT * temps);
+void tempsChangeSupport(tempsT * temps);
 
-	//fprintf(stderr, "Calcul énergétique\n");
-	//observableAfficheEnergie(&control.systeme);
-
-	fprintf(stderr, "\nSuppression du système\n");
-	systemeSuppression(&control.systeme);
-
-	fprintf(stderr, "Suppression de l'horloge\n");
-	tempsSuppression(&control.temps);
-
-	fprintf(stderr, "Suppression du graphe\n");
-	grapheSuppression(&control.graphe);
-
-	fprintf(stderr, "\nSortie de SiCP\n");
-
-	return 0;
-	}
-
-//////////////////////////////////////////////////////////////////
+#endif

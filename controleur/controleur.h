@@ -1,7 +1,7 @@
 /*
-Copyright mars 2018, Stephan Runigo
+Copyright avril 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.6 simulateur de chaîne de pendules
+SiCP 1.7 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -37,6 +37,7 @@ termes.
 #include "../modele/change.h"				//	Changement des parametres du système
 #include "../modele/observables.h"			//	Observables du système
 #include "../graphique/graphique.h"			//	Librairie SDL et représentation graphique
+#include "../graphique/temps.h"			//	Horloge SDL
 
 typedef struct ControleurT controleurT;
 	struct ControleurT
@@ -51,6 +52,8 @@ typedef struct ControleurT controleurT;
 		grapheT graphe;		// Représentation graphique de la chaîne
 
 		SDL_Event evenement;	// Évenement SDL
+
+		tempsT temps; // Horloge SDL
 
 		int sortie; // sortie de SiCP si > 0
 

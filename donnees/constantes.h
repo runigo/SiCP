@@ -1,7 +1,7 @@
 /*
-Copyright mars 2018, Stephan Runigo
+Copyright avril 2018, Stephan Runigo
 runigo@free.fr
-SiCP 1.6 simulateur de chaîne de pendules
+SiCP 1.7 simulateur de chaîne de pendules
 Ce logiciel est un programme informatique servant à simuler l'équation
 d'une chaîne de pendules et à en donner une représentation graphique.
 Ce logiciel est régi par la licence CeCILL soumise au droit français et
@@ -33,18 +33,20 @@ termes.
 #define _CONSTANTES_
 
 //#include "unistd.h"
-
 #include "math.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include <assert.h>
+
+
+#define TEMPS_AFFICHAGE 40 // Durée entre les affichages en ms
 
 //#define PI 3.14159265358979323846264338327950288419716939937510582
 //#define PI 3.1415926535897932384626433832795
 #define PI 3.14159265359
 #define DEUXPI 6.28318530718
 
-#define LARGEUR 999 // Largeur de la fenêtre 990
+#define LARGEUR 990 // Largeur de la fenêtre
 #define HAUTEUR 440 // Hauteur de la fenêtre
 #define EPSILON 0.0003 // Valeur minimale de phi afin d'éviter un ancien bug.
 
