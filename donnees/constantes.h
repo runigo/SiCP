@@ -39,7 +39,7 @@ termes.
 #include <assert.h>
 
 
-#define TEMPS_AFFICHAGE 40 // Durée entre les affichages en ms
+#define TEMPS_AFFICHAGE 70 // Durée entre les affichages en ms
 
 //#define PI 3.14159265358979323846264338327950288419716939937510582
 //#define PI 3.1415926535897932384626433832795

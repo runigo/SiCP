@@ -33,26 +33,25 @@ termes.
 // http://piconano2015.wixsite.com/soft/code
 // Copyright 2015 par PicoSoft.
 
-#ifndef _TEMPS_
-#define _TEMPS_
+#ifndef _HORLOGE_
+#define _HORLOGE_
 
 #include "graphique.h"
 
-typedef struct TempsT tempsT;
-	struct TempsT
+typedef struct HorlogeT horlogeT;
+	struct HorlogeT
 		{
-		SDL_Event evenement;	// Evenement
-		SDL_TimerID horloge;          // timer principal
-		//int *parametre;
-		long int date;          // la référence de temps du programme (nombre de période timer principal)
-		long int dateActuel;          // 
-		long int datePrecedente;         //
+		SDL_TimerID horloge;	// timer principal
+		long int depart;	// Départ du chronomètre
 		};
 
-Uint32 tempsEvenement(Uint32 it, tempsT * temps);
+Uint32 horlogeEvenement(Uint32 it, horlogeT * horloge);
 
-int tempsCreation(tempsT * temps);
-int tempsSuppression(tempsT * temps);
-void tempsChangeSupport(tempsT * temps);
+int horlogeCreation(horlogeT * horloge);
+int horlogeSuppression(horlogeT * horloge);
+void horlogeChangeSupport(horlogeT * horloge);
+
+int horlogeChronoDepart(horlogeT * horloge);
+int horlogeChronoDuree(horlogeT * horloge);
 
 #endif

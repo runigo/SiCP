@@ -37,7 +37,7 @@ termes.
 #include "../modele/change.h"				//	Changement des parametres du système
 #include "../modele/observables.h"			//	Observables du système
 #include "../graphique/graphique.h"			//	Librairie SDL et représentation graphique
-#include "../graphique/temps.h"			//	Horloge SDL
+#include "../graphique/horloge.h"			//	Horloge SDL
 
 typedef struct ControleurT controleurT;
 	struct ControleurT
@@ -53,7 +53,7 @@ typedef struct ControleurT controleurT;
 
 		SDL_Event evenement;	// Évenement SDL
 
-		tempsT temps; // Horloge SDL
+		horlogeT horloge; // Horloge SDL
 
 		int sortie; // sortie de SiCP si > 0
 

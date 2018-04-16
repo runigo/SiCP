@@ -54,7 +54,7 @@ int main(int nb, char *opt[])
 	systemeSuppression(&control.systeme);
 
 	fprintf(stderr, "Suppression de l'horloge\n");
-	tempsSuppression(&control.temps);
+	horlogeSuppression(&control.horloge);
 
 	fprintf(stderr, "Suppression du graphe\n");
 	grapheSuppression(&control.graphe);

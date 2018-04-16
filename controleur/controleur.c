@@ -31,134 +31,136 @@ termes.
 
 #include "controleur.h"
 
-int controleurProjection(controleurT * control);
-int controleurEvolutionSysteme(controleurT * control);
-int controleurConstructionGraphique(controleurT * control);
+int controleurProjection(controleurT * controleur);
+int controleurEvolutionSysteme(controleurT * controleur);
+int controleurConstructionGraphique(controleurT * controleur);
 
-int controleurTraiteEvenement(controleurT * control);
+int controleurTraiteEvenement(controleurT * controleur);
 
-int controleurActionClavier(controleurT * control);
-int controleurClavierMaj(controleurT * control);
-int controleurClavierCtrl(controleurT * control);
+int controleurActionClavier(controleurT * controleur);
+int controleurClavierMaj(controleurT * controleur);
+int controleurClavierCtrl(controleurT * controleur);
 
-int controleurClavier(controleurT * control);
-int controleurSouris(controleurT * control);
-void controleurBoutonSouris(controleurT * control, int appui);
+int controleurClavier(controleurT * controleur);
+int controleurSouris(controleurT * controleur);
+void controleurBoutonSouris(controleurT * controleur, int appui);
 
-void controleurChangeMode(controleurT * control);
-void controleurChangeVitesse(controleurT * control, float facteur);
+void controleurChangeMode(controleurT * controleur);
+void controleurChangeVitesse(controleurT * controleur, float facteur);
 
 
-int controleurSimulationGraphique(controleurT * control)
+int controleurSimulationGraphique(controleurT * controleur)
 	{
 		//fprintf(stderr, "Entrée dans la boucle SDL\n");
 	do	{
 			//fprintf(stderr, "Prise en compte des actions clavier\n");
-		controleurActionClavier(control);
+		controleurActionClavier(controleur);
 		}
-	while((*control).sortie == 0);
+	while((*controleur).sortie == 0);
 
 	return 0;
 	}
 
-int controleurEvolution(controleurT * control)
+int controleurActionClavier(controleurT * controleur)
 	{
-	//printf("Entrée dans controleurEvolution, SDL_GetTicks() = %d\n",(int)(SDL_GetTicks()));
+		//fprintf(stderr, "Traitement des évenements, mode %d\n", (*controleur).mode);
+	if(SDL_WaitEvent(&(*controleur).evenement))
+		{
+		controleurTraiteEvenement(controleur);
+		}
+	return 0;
+	}
+
+int controleurEvolution(controleurT * controleur)
+	{
+	
+	//printf("\nEntrée dans controleurEvolution, SDL_GetTicks() = %d\n",(int)(SDL_GetTicks()));
+
+		//fprintf(stderr, "    Durée entre affichage = %d\n",horlogeChronoDuree(&(*controleur).horloge));
+	//horlogeChronoDepart(&(*controleur).horloge);
 
 		//fprintf(stderr, "Projection du systeme sur la représentation graphique\n");
-	projectionSystemChaineDePendule(&(*control).systeme, &(*control).projection, &(*control).graphe);
+	projectionSystemChaineDePendule(&(*controleur).systeme, &(*controleur).projection, &(*controleur).graphe);
+		//fprintf(stderr, "    Durée = %d\n",horlogeChronoDuree(&(*controleur).horloge));
 
+	//horlogeChronoDepart(&(*controleur).horloge);
+
+	if((*controleur).options.mode > 0)
+		{
 		//fprintf(stderr, "Evolution temporelle du systeme\n");
-	systemeEvolution(&(*control).systeme, (*control).options.duree);
+		systemeEvolution(&(*controleur).systeme, (*controleur).options.duree);
+		//fprintf(stderr, "    Durée = %d\n",horlogeChronoDuree(&(*controleur).horloge));
+		}
+
+	//horlogeChronoDepart(&(*controleur).horloge);
 
 		//fprintf(stderr, "Mise à jour de la fenêtre graphique et pause\n");
-	controleurConstructionGraphique(control);
+	controleurConstructionGraphique(controleur);
+		//fprintf(stderr, "    Durée des évolutions = %d\n",horlogeChronoDuree(&(*controleur).horloge));
+
+	//horlogeChronoDepart(&(*controleur).horloge);
 
 	//printf("Sortie de controleurEvolution, SDL_GetTicks() = %d\n",(int)(SDL_GetTicks()));
 
-	return (*control).sortie;
+	return 0;
 	}
 
-int controleurConstructionGraphique(controleurT * control)
+int controleurConstructionGraphique(controleurT * controleur)
 	{
 		//fprintf(stderr, "Nettoyage de l'affichage\n");
-	graphiqueNettoyage((*control).graphe.fond);
+	graphiqueNettoyage((*controleur).graphe.fond);
 
 		//fprintf(stderr, "Dessin des graphes\n");
-	if((*control).graphe.support==0)
+	if((*controleur).graphe.support==0)
 		{
-		graphiquePendule(&(*control).graphe);
+		graphiquePendule(&(*controleur).graphe);
 		}
 	else
 		{
-		graphiquePenduleSupport(&(*control).graphe);
+		graphiquePenduleSupport(&(*controleur).graphe);
 		}
 
 		//fprintf(stderr, "Mise à jour de l'affichage\n");
 	graphiqueMiseAJour();
 
 		// Pause
-	SDL_Delay((*control).options.pause);
+	SDL_Delay((*controleur).options.pause);
 
-	return (*control).sortie;
+	return 0;
 	}
 
-int controleurActionClavier(controleurT * control)
+int controleurTraiteEvenement(controleurT * controleur)
 	{
 	int sortie = 0;
-		//fprintf(stderr, "Traitement des évenements, mode %d\n", (*control).mode);
-	//if((*control).options.mode<0){
-				// Attente d'un évenement SDL
-		if(SDL_WaitEvent(&(*control).evenement))
-			{
-			sortie += controleurTraiteEvenement(control);
-			}
-		//}else{
-			// Sans attente
-		//if( SDL_PollEvent(&(*control).evenement) )
-			//{sortie += controleurTraiteEvenement(control);}
-		//}
-
-
-	//if((*control).evenement.type == SDL_QUIT) sortie += 1;
-
-	//(*control).sortie += sortie;
-
-	return (*control).sortie;
-	}
-
-int controleurTraiteEvenement(controleurT * control)
-	{
-	int sortie = 0;
-	switch((*control).evenement.type)
+	switch((*controleur).evenement.type)
 		{
 		case SDL_QUIT:
-			(*control).sortie = 1;break;
+			(*controleur).sortie = 1;break;
 		case SDL_MOUSEMOTION:
-			sortie = controleurSouris(control);break;
+			sortie = controleurSouris(controleur);break;
 		case SDL_MOUSEBUTTONDOWN:
-			controleurBoutonSouris(control, 1);break;
+			controleurBoutonSouris(controleur, 1);break;
 		case SDL_MOUSEBUTTONUP:
-			controleurBoutonSouris(control, 0);break;
+			controleurBoutonSouris(controleur, 0);break;
 		case SDL_USEREVENT:
-			controleurEvolution(control);break;
+			controleurEvolution(controleur);break;
 	  case SDL_KEYDOWN:
 			{
-			if ((((*control).evenement.key.keysym.mod & KMOD_LSHIFT) == KMOD_LSHIFT)
-			|| (((*control).evenement.key.keysym.mod & KMOD_RSHIFT) == KMOD_RSHIFT))
+			if ((((*controleur).evenement.key.keysym.mod & KMOD_LSHIFT) == KMOD_LSHIFT)
+			|| (((*controleur).evenement.key.keysym.mod & KMOD_RSHIFT) == KMOD_RSHIFT))
 				{
-				sortie = controleurClavierMaj(control);break;
+				sortie = controleurClavierMaj(controleur);break;
 				}
 			else
 				{
-				if ((((*control).evenement.key.keysym.mod & KMOD_LCTRL) == KMOD_LCTRL)
-				|| (((*control).evenement.key.keysym.mod & KMOD_RCTRL) == KMOD_RCTRL))
+				if ((((*controleur).evenement.key.keysym.mod & KMOD_LCTRL) == KMOD_LCTRL)
+				|| (((*controleur).evenement.key.keysym.mod & KMOD_RCTRL) == KMOD_RCTRL))
 					{
-					sortie = controleurClavierCtrl(control);break;
+					sortie = controleurClavierCtrl(controleur);break;
 					}
 				else
 					{
-					sortie = controleurClavier(control);break;
+					sortie = controleurClavier(controleur);break;
 					}
 				}
 			}
@@ -169,56 +171,56 @@ int controleurTraiteEvenement(controleurT * control)
 	if(sortie != 0)
 		{
 		fprintf(stderr, "sortie <> 0\n");
-		(*control).sortie = 1;
+		(*controleur).sortie = 1;
 		}
 	return sortie;
 	}
 /*
-int controleurTraiteEvenement(controleurT * control)
+int controleurTraiteEvenement(controleurT * controleur)
 	{
 	int sortie = 0;
 
-	switch((*control).evenement.type)
+	switch((*controleur).evenement.type)
 	  {
 	  case SDL_QUIT:
 	    sortie = 1;break;
 	  case SDL_KEYDOWN:
-	    sortie = controleurClavier(control);break;
+	    sortie = controleurClavier(controleur);break;
 	  }
 
 	if(sortie != 0)
 	  {
 	  fprintf(stderr, "sortie <> 0\n");
-    (*control).sortie = 1;
+    (*controleur).sortie = 1;
     }
 
 	return sortie;
 	}
 */
-void controleurChangeMode(controleurT * control)
+void controleurChangeMode(controleurT * controleur)
 	{
-	(*control).options.mode=-(*control).options.mode;
+	(*controleur).options.mode=-(*controleur).options.mode;
 
 	return;
 	}
 
-void controleurChangeVitesse(controleurT * control, float facteur)
+void controleurChangeVitesse(controleurT * controleur, float facteur)
 	{
-	if( (*control).options.duree > 11 )
+	if( (*controleur).options.duree > 11 )
 		{
-		(*control).options.duree = (*control).options.duree * facteur;
+		(*controleur).options.duree = (*controleur).options.duree * facteur;
 		}
 	else
 		{
 		if( facteur > 1)
 			{
-			(*control).options.duree ++;
+			(*controleur).options.duree ++;
 			}
 		else
 			{
-			if( (*control).options.duree > 1 )
+			if( (*controleur).options.duree > 1 )
 				{
-				(*control).options.duree --;
+				(*controleur).options.duree --;
 				}
 			else
 				{
@@ -227,419 +229,422 @@ void controleurChangeVitesse(controleurT * control, float facteur)
 			}
 		}
 
-	if( (*control).options.duree > DUREE_MAX)
+	if( (*controleur).options.duree > DUREE_MAX)
 		{
 		fprintf(stderr, "duree maximale atteinte, ");
-		(*control).options.duree = DUREE_MAX;
+		(*controleur).options.duree = DUREE_MAX;
 		}
-	fprintf(stderr, "duree = %d\n", (*control).options.duree);
+	fprintf(stderr, "duree = %d\n", (*controleur).options.duree);
 	return;
 	}
 
-int controleurClavier(controleurT * control)
+int controleurClavier(controleurT * controleur)
 	{
-	switch ((*control).evenement.key.keysym.sym)
+	switch ((*controleur).evenement.key.keysym.sym)
 		{
 	// Sortie
 		case SDL_QUIT:
-			(*control).sortie = 1;break;
+			(*controleur).sortie = 1;break;
 		//case SDLK_ESCAPE:
-			//(*control).sortie = 1;break;
+			//(*controleur).sortie = 1;break;
 
 	// Mode : attente d'un evenement / pas d'attente
 		case SDLK_RETURN:
-			controleurChangeMode(control);break;
+			controleurChangeMode(controleur);break;
 		//case SDLK_BACKSPACE:
-			//controleurChangeMode(control);break;
+			//controleurChangeMode(controleur);break;
 
 	// Vitesse de la simulation
 		case SDLK_KP_PLUS:
-			controleurChangeVitesse(control, 1.1);break;
+			controleurChangeVitesse(controleur, 1.1);break;
 		case SDLK_KP_MINUS:
-			controleurChangeVitesse(control, 0.91);break;
+			controleurChangeVitesse(controleur, 0.91);break;
 		case SDLK_F9:
-			controleurChangeVitesse(control, 0.32);break;
+			controleurChangeVitesse(controleur, 0.32);break;
 		case SDLK_F10:
-			controleurChangeVitesse(control, 0.91);break;
+			controleurChangeVitesse(controleur, 0.91);break;
 		case SDLK_F11:
-			controleurChangeVitesse(control, 1.1);break;
+			controleurChangeVitesse(controleur, 1.1);break;
 		case SDLK_F12:
-			controleurChangeVitesse(control, 3.1);break;
+			controleurChangeVitesse(controleur, 3.1);break;
 
 	// Support
 		case SDLK_F8:
-			grapheChangeSupport(&(*control).graphe);break;
+			grapheChangeSupport(&(*controleur).graphe);break;
 
 	// Conditions aux limites
 		case SDLK_y:
-			changeDephasage(&(*control).systeme, 2*PI);break;
+			changeDephasage(&(*controleur).systeme, 2*PI);break;
 		case SDLK_h:
-			changeDephasage(&(*control).systeme, -2*PI);break;
+			changeDephasage(&(*controleur).systeme, -2*PI);break;
 		case SDLK_w:
-			changeConditionsLimites(&(*control).systeme, 0); // periodiques
+			changeConditionsLimites(&(*controleur).systeme, 0); // periodiques
 			break;
 		case SDLK_x:
-			changeConditionsLimites(&(*control).systeme, 1); // libres
+			changeConditionsLimites(&(*controleur).systeme, 1); // libres
 			break;
 		case SDLK_c:
-			changeConditionsLimites(&(*control).systeme, 2); // fixes
+			changeConditionsLimites(&(*controleur).systeme, 2); // fixes
 			break;
 		case SDLK_b:
 			fprintf(stderr, "Commande désactivée");
-			//changeConditionsLimites(&(*control).systeme, 3); // libre fixe
+			//changeConditionsLimites(&(*controleur).systeme, 3); // libre fixe
 			break;
 		case SDLK_n:
-			changeConditionsLimites(&(*control).systeme, 4); // fixe libre
+			changeConditionsLimites(&(*controleur).systeme, 4); // fixe libre
 			break;
 
 
 	// Dissipation
 		case SDLK_e:
-			changeDissipation(&(*control).systeme, 0.77);break;
+			changeDissipation(&(*controleur).systeme, 0.77);break;
 		case SDLK_d:
-			changeDissipation(&(*control).systeme, 1.3);break;
+			changeDissipation(&(*controleur).systeme, 1.3);break;
 		case SDLK_r:
-			changeFormeDissipation(&(*control).systeme, 0);break;
+			changeFormeDissipation(&(*controleur).systeme, 0);break;
 		case SDLK_f:
-			changeFormeDissipation(&(*control).systeme, 1);break;
+			changeFormeDissipation(&(*controleur).systeme, 1);break;
 		case SDLK_v:
-			changeFormeDissipation(&(*control).systeme, 2);break;
+			changeFormeDissipation(&(*controleur).systeme, 2);break;
 
 	// Couplage
 		case SDLK_a:
-			changeCouplage(&(*control).systeme, 1.1);break;
+			changeCouplage(&(*controleur).systeme, 1.1);break;
 		case SDLK_q:
-			changeCouplage(&(*control).systeme, 0.91);break;
+			changeCouplage(&(*controleur).systeme, 0.91);break;
 
 	// Masse
 		case SDLK_z:
-			changeMasse(&(*control).systeme, 1.7);break;
+			changeMasse(&(*controleur).systeme, 1.7);break;
 		case SDLK_s:
-			changeMasse(&(*control).systeme, 0.6);break;
+			changeMasse(&(*controleur).systeme, 0.6);break;
 
 	// Gravitation
 		case SDLK_t:
-			changeGravitation(&(*control).systeme, 1.3);break;
+			changeGravitation(&(*controleur).systeme, 1.3);break;
 		case SDLK_g:
-			changeGravitation(&(*control).systeme, 0.77);break;
+			changeGravitation(&(*controleur).systeme, 0.77);break;
 
 	// Moteur jonction Josephson
 		case SDLK_UP:
-			moteursChangeJosephson(&(*control).systeme.moteur,1.1);break;
+			moteursChangeJosephson(&(*controleur).systeme.moteur,1.1);break;
 		case SDLK_DOWN:
-			moteursChangeJosephson(&(*control).systeme.moteur,0.91);break;
+			moteursChangeJosephson(&(*controleur).systeme.moteur,0.91);break;
 		case SDLK_LEFT:
-			moteursChangeJosephson(&(*control).systeme.moteur,-1.0);break;
+			moteursChangeJosephson(&(*controleur).systeme.moteur,-1.0);break;
 		case SDLK_RIGHT:
-			moteursChangeJosephson(&(*control).systeme.moteur,0.0);break;
+			moteursChangeJosephson(&(*controleur).systeme.moteur,0.0);break;
 
 	// Moteur générateur de signaux
 		case SDLK_p:
-			moteursChangeFrequence(&(*control).systeme.moteur,1.1);break;
+			moteursChangeFrequence(&(*controleur).systeme.moteur,1.1);break;
 		case SDLK_m:
-			moteursChangeFrequence(&(*control).systeme.moteur,0.91);break;
+			moteursChangeFrequence(&(*controleur).systeme.moteur,0.91);break;
 		case SDLK_u:
-			moteursChangeAmplitude(&(*control).systeme.moteur,1.1);break;
+			moteursChangeAmplitude(&(*controleur).systeme.moteur,1.1);break;
 		case SDLK_j:
-			moteursChangeAmplitude(&(*control).systeme.moteur,0.91);break;
+			moteursChangeAmplitude(&(*controleur).systeme.moteur,0.91);break;
 		case SDLK_o:
-			moteursChangeGenerateur(&(*control).systeme.moteur, -1);break;
+			moteursChangeGenerateur(&(*controleur).systeme.moteur, -1);break;
 		case SDLK_i:
-			moteursChangeGenerateur(&(*control).systeme.moteur, 3);break;
+			moteursChangeGenerateur(&(*controleur).systeme.moteur, 3);break;
 		case SDLK_l:
-			moteursChangeGenerateur(&(*control).systeme.moteur, 2);break;
+			moteursChangeGenerateur(&(*controleur).systeme.moteur, 2);break;
 
 
 	// Choix de la simulation
 /*
 		case SDLK_F1: // Pendules
-			(*control).systeme.equation = 1;break;
+			(*controleur).systeme.equation = 1;break;
 		case SDLK_F2: // Harmoniques
-			(*control).systeme.equation = 2;break;
+			(*controleur).systeme.equation = 2;break;
 		case SDLK_F3: // Corde
-			(*control).systeme.equation = 3;break;
+			(*controleur).systeme.equation = 3;break;
 		case SDLK_F4: // Corde asymétrique
-			(*control).systeme.equation = 4;break;
+			(*controleur).systeme.equation = 4;break;
 */
   // Afficher les observables
 
 		case SDLK_F5:
-			observablesAfficheEnergie(&(*control).systeme);
+			observablesAfficheEnergie(&(*controleur).systeme);
 			break;
 		case SDLK_F6:
-			moteursAfficheHorloge(&(*control).systeme.moteur);
+			moteursAfficheHorloge(&(*controleur).systeme.moteur);
 			break;
 		case SDLK_F7:
-			projectionAffichePointDeVue(&(*control).projection);
+			projectionAffichePointDeVue(&(*controleur).projection);
 			break;
 
 		default:
 			;
 		}
-	return (*control).sortie;
+	return (*controleur).sortie;
 	}
 
-int controleurClavierMaj(controleurT * control)
+int controleurClavierMaj(controleurT * controleur)
 	{
-	switch ((*control).evenement.key.keysym.sym)
+	switch ((*controleur).evenement.key.keysym.sym)
 		{
-
 	// Sortie
-
-		case SDLK_ESCAPE:
-			(*control).sortie = 1;break;
+		case SDL_QUIT:
+			(*controleur).sortie = 1;break;
+		//case SDLK_ESCAPE:
+			//(*controleur).sortie = 1;break;
 
     // Mode : attente d'un evenement / pas d'attente
 
 		case SDLK_RETURN:
-			controleurChangeMode(control);break;
+			controleurChangeMode(controleur);break;
 		case SDLK_BACKSPACE:
-			controleurChangeMode(control);break;
+			controleurChangeMode(controleur);break;
 
 
 	// Réinitialisation du système
 		// Lecture des fichier
 		case SDLK_a:
 			fprintf(stderr, "Réinitialisation du système\n");
-			systemeInitialisePosition(&(*control).systeme);break;
+			systemeInitialisePosition(&(*controleur).systeme);break;
 	/*	case SDLK_z:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 1);break;
+			fichierLecture(&(*controleur).systeme, 1);break;
 		case SDLK_e:
 			fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 2);break;
-			fichierFonction(&(*control).systeme, 2);break;//Triangle
+			//fichierLecture(&(*controleur).systeme, 2);break;
+			fichierFonction(&(*controleur).systeme, 2);break;//Triangle
 		case SDLK_r:
 			fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 3);break;
-			fichierFonction(&(*control).systeme, 3);break;//Triangle
+			//fichierLecture(&(*controleur).systeme, 3);break;
+			fichierFonction(&(*controleur).systeme, 3);break;//Triangle
 		case SDLK_t:
 			fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 4);break;
-			fichierFonction(&(*control).systeme, 4);break;//Triangle
+			//fichierLecture(&(*controleur).systeme, 4);break;
+			fichierFonction(&(*controleur).systeme, 4);break;//Triangle
 		case SDLK_y:
 			fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 5);break;
-			fichierFonction(&(*control).systeme, 5);break;//Triangle
+			//fichierLecture(&(*controleur).systeme, 5);break;
+			fichierFonction(&(*controleur).systeme, 5);break;//Triangle
 		case SDLK_u:
 			fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 6);break;
-			fichierFonction(&(*control).systeme, 6);break;//Triangle
+			//fichierLecture(&(*controleur).systeme, 6);break;
+			fichierFonction(&(*controleur).systeme, 6);break;//Triangle
 		case SDLK_i:
 			fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 7);break;
-			fichierFonction(&(*control).systeme, 7);break;//Triangle
+			//fichierLecture(&(*controleur).systeme, 7);break;
+			fichierFonction(&(*controleur).systeme, 7);break;//Triangle
 
 
 		case SDLK_q:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 10);break;
+			fichierLecture(&(*controleur).systeme, 10);break;
 		case SDLK_s:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 11);break;
+			fichierLecture(&(*controleur).systeme, 11);break;
 		case SDLK_d:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 12);break;
+			fichierLecture(&(*controleur).systeme, 12);break;
 		case SDLK_f:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 13);break;
+			fichierLecture(&(*controleur).systeme, 13);break;
 		case SDLK_g:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 14);break;
+			fichierLecture(&(*controleur).systeme, 14);break;
 		case SDLK_h:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 15);break;
+			fichierLecture(&(*controleur).systeme, 15);break;
 		case SDLK_j:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 16);break;
+			fichierLecture(&(*controleur).systeme, 16);break;
 		case SDLK_k:
 			fprintf(stderr, "Réinitialisation du système\n");
-			fichierLecture(&(*control).systeme, 17);break;
+			fichierLecture(&(*controleur).systeme, 17);break;
 
 		case SDLK_o:
 			//fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 8);break;
+			//fichierLecture(&(*controleur).systeme, 8);break;
 		case SDLK_p:
 			//fprintf(stderr, "Réinitialisation du système\n");
-			controleurChangeSensibilite(&(*control), 1.1);break;
+			controleurChangeSensibilite(&(*controleur), 1.1);break;
 			//fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 9);break;
+			//fichierLecture(&(*controleur).systeme, 9);break;
 		case SDLK_l:
 			//fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 18);break;
+			//fichierLecture(&(*controleur).systeme, 18);break;
 		case SDLK_m:
-			controleurChangeSensibilite(&(*control), 0.91);break;
+			controleurChangeSensibilite(&(*controleur), 0.91);break;
 			//fprintf(stderr, "Réinitialisation du système\n");
-			//fichierLecture(&(*control).systeme, 19);break;
+			//fichierLecture(&(*controleur).systeme, 19);break;
 
 
 		// Ecriture des fichiers
 		// Ecriture des fichiers
 		case SDLK_w:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 10);break;
+			fichierEcriture(&(*controleur).systeme, 10);break;
 		case SDLK_x:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 11);break;
+			fichierEcriture(&(*controleur).systeme, 11);break;
 		case SDLK_c:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 12);break;
+			fichierEcriture(&(*controleur).systeme, 12);break;
 		case SDLK_v:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 13);break;
+			fichierEcriture(&(*controleur).systeme, 13);break;
 		case SDLK_b:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 14);break;
+			fichierEcriture(&(*controleur).systeme, 14);break;
 		case SDLK_n:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 15);break;
+			fichierEcriture(&(*controleur).systeme, 15);break;
 		case SDLK_d:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierLecture(&(*control).systeme, );break;
+			fichierLecture(&(*controleur).systeme, );break;
 		case SDLK_f:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierLecture(&(*control).systeme, );break;
+			fichierLecture(&(*controleur).systeme, );break;
 		case SDLK_g:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierLecture(&(*control).systeme, );break;
+			fichierLecture(&(*controleur).systeme, );break;
 		case SDLK_:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierLecture(&(*control).systeme, );break;
+			fichierLecture(&(*controleur).systeme, );break;
 		case SDLK_:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierLecture(&(*control).systeme, );break;*/
+			fichierLecture(&(*controleur).systeme, );break;*/
 
 		default:
 			;
 		}
-	return (*control).sortie;
+	return (*controleur).sortie;
 	}
 
-int controleurClavierCtrl(controleurT * control)
+int controleurClavierCtrl(controleurT * controleur)
 	{
-	switch ((*control).evenement.key.keysym.sym)
+	switch ((*controleur).evenement.key.keysym.sym)
 		{
 	// Sortie
-		case SDLK_ESCAPE:
-			(*control).sortie = 1;break;
+		case SDL_QUIT:
+			(*controleur).sortie = 1;break;
+		//case SDLK_ESCAPE:
+			//(*controleur).sortie = 1;break;
+
 	// Mode : attente d'un evenement / pas d'attente
 		case SDLK_RETURN:
-			controleurChangeMode(control);break;
+			controleurChangeMode(controleur);break;
 		case SDLK_BACKSPACE:
-			controleurChangeMode(control);break;
+			controleurChangeMode(controleur);break;
 
 	// Enregistrement
 		// Sauvegarde du système fichierEcriture sans effet
 	/*	case SDLK_a:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 0);break;
+			fichierEcriture(&(*controleur).systeme, 0);break;
 		case SDLK_z:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 1);break;
+			fichierEcriture(&(*controleur).systeme, 1);break;
 		case SDLK_e:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 2);break;
+			fichierEcriture(&(*controleur).systeme, 2);break;
 		case SDLK_r:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 3);break;
+			fichierEcriture(&(*controleur).systeme, 3);break;
 		case SDLK_t:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 4);break;
+			fichierEcriture(&(*controleur).systeme, 4);break;
 		case SDLK_y:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 5);break;
+			fichierEcriture(&(*controleur).systeme, 5);break;
 		case SDLK_u:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 6);break;
+			fichierEcriture(&(*controleur).systeme, 6);break;
 		case SDLK_i:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 7);break;
+			fichierEcriture(&(*controleur).systeme, 7);break;
 		case SDLK_o:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 8);break;
+			fichierEcriture(&(*controleur).systeme, 8);break;
 		case SDLK_p:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 9);break;
+			fichierEcriture(&(*controleur).systeme, 9);break;
 		case SDLK_q:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 10);break;
+			fichierEcriture(&(*controleur).systeme, 10);break;
 		case SDLK_s:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 11);break;
+			fichierEcriture(&(*controleur).systeme, 11);break;
 		case SDLK_d:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 12);break;
+			fichierEcriture(&(*controleur).systeme, 12);break;
 		case SDLK_f:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 13);break;
+			fichierEcriture(&(*controleur).systeme, 13);break;
 		case SDLK_g:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 14);break;
+			fichierEcriture(&(*controleur).systeme, 14);break;
 		case SDLK_h:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 15);break;
+			fichierEcriture(&(*controleur).systeme, 15);break;
 
 
 		// Ecriture des fichiers
 		case SDLK_w:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 10);break;
+			fichierEcriture(&(*controleur).systeme, 10);break;
 		case SDLK_x:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 11);break;
+			fichierEcriture(&(*controleur).systeme, 11);break;
 		case SDLK_c:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 12);break;
+			fichierEcriture(&(*controleur).systeme, 12);break;
 		case SDLK_v:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 13);break;
+			fichierEcriture(&(*controleur).systeme, 13);break;
 		case SDLK_b:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 14);break;
+			fichierEcriture(&(*controleur).systeme, 14);break;
 		case SDLK_n:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, 15);break;
+			fichierEcriture(&(*controleur).systeme, 15);break;
 		case SDLK_d:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, );break;
+			fichierEcriture(&(*controleur).systeme, );break;
 		case SDLK_f:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, );break;
+			fichierEcriture(&(*controleur).systeme, );break;
 		case SDLK_g:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, );break;
+			fichierEcriture(&(*controleur).systeme, );break;
 		case SDLK_:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, );break;
+			fichierEcriture(&(*controleur).systeme, );break;
 		case SDLK_:
 			fprintf(stderr, "Sauvegarde du système\n");
-			fichierEcriture(&(*control).systeme, );break;*/
+			fichierEcriture(&(*controleur).systeme, );break;*/
 
 		default:
 			;
 		}
-	return (*control).sortie;
+	return (*controleur).sortie;
 	}
 
-int controleurSouris(controleurT * control)
+int controleurSouris(controleurT * controleur)
 	{
 	float x, y;
-	if((*control).appui==1)
+	if((*controleur).appui==1)
 		{
-		//fprintf(stderr, "controleurSouris xrel = %d\n", (*control).evenement.motion.xrel);
-		x=-0.0031*(float)((*control).evenement.motion.xrel);
-		y=0.0031*(float)((*control).evenement.motion.yrel);
-		//fprintf(stderr, "controleurSouris yrel = %d\n", (*control).evenement.motion.yrel);
-		//fprintf(stderr, "controleurSouris yrel = %d\n", (*control).evenement.motion.yrel);
-		projectionChangePsi(&(*control).projection, x);
-		projectionChangePhi(&(*control).projection, y);
+		//fprintf(stderr, "controleurSouris xrel = %d\n", (*controleur).evenement.motion.xrel);
+		x=-0.0031*(float)((*controleur).evenement.motion.xrel);
+		y=0.0031*(float)((*controleur).evenement.motion.yrel);
+		//fprintf(stderr, "controleurSouris yrel = %d\n", (*controleur).evenement.motion.yrel);
+		//fprintf(stderr, "controleurSouris yrel = %d\n", (*controleur).evenement.motion.yrel);
+		projectionChangePsi(&(*controleur).projection, x);
+		projectionChangePhi(&(*controleur).projection, y);
 		}
-	return (*control).sortie;
+	return (*controleur).sortie;
 	}
 
-void controleurBoutonSouris(controleurT * control, int appui)
+void controleurBoutonSouris(controleurT * controleur, int appui)
 	{
-	(*control).appui=appui;
+	(*controleur).appui=appui;
 	return;
 	}
 //////////////////////////////////////////////////////////////////////////////////////

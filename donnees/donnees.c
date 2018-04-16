@@ -75,7 +75,7 @@ int donneesControleur(controleurT * control)
 	graphiqueInitialise((*control).options.fond);
 
 		fprintf(stderr, " Initialisation horloge SDL\n");
-	tempsCreation(&(*control).temps);
+	horlogeCreation(&(*control).horloge);
 
 	return 0;
 	}

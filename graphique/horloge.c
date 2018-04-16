@@ -33,54 +33,57 @@ termes.
 // http://piconano2015.wixsite.com/soft/code
 // Copyright 2015 par PicoSoft.
 
-#include "temps.h"
+#include "horloge.h"
+
+/*
+	VARIABLES GLOBALES
+*/
+
+SDL_Event user_event;
+int *paramTimer;
+
+/*
+	...............
+*/
 
 Uint32 callTimer(Uint32 it, void *para);
 
-int tempsCreation(tempsT * temps)
+int horlogeCreation(horlogeT * horloge)
 	{
-		//fprintf(stderr, " Initialisation du timer, fond = %d\n", fond);
-		// définition d'un User Event
-	(*temps).evenement.type=SDL_USEREVENT;
+		//fprintf(stderr, " Initialisation de l'horloge \n");
+
+	user_event.type=SDL_USEREVENT;
 
 		// Lancement du Timer principal
-	//(*temps).horloge = SDL_AddTimer(TEMPS_AFFICHAGE, tempsEvenement, temps);
-	(*temps).horloge = SDL_AddTimer(TEMPS_AFFICHAGE, callTimer, temps);
+	(*horloge).horloge = SDL_AddTimer(TEMPS_AFFICHAGE, callTimer, &paramTimer);
 
-		//int *parametre;
-
-	(*temps).date = 0;          // la référence de temps du programme (nombre de période timer principal)
-	(*temps).dateActuel = 0;          // 
-	(*temps).datePrecedente = 0;         //
+	(*horloge).depart = 0;	// Date du départ du chronomètre
 
 	return 0;
 	}
 
 Uint32 callTimer(Uint32 it, void *para)
-{   // Callback du timer principal
-    // on créé un event pour passer le wait
-SDL_Event user_event;
-    // définition d'un User Event
-    user_event.type=SDL_USEREVENT;
-    SDL_PushEvent(&user_event);
+	{				// Callback du timer principal
+	SDL_PushEvent(&user_event);
 	(void) para;
-    return it;
-}
-
-/*
-Uint32 tempsEvenement(Uint32 it, tempsT * temps)
-	{   // Rappel automatique du timer principal
-		// on crée un évenement pour passer le wait
-	SDL_PushEvent(&(*temps).evenement);
-
 	return it;
 	}
-*/
-int tempsSuppression(tempsT * temps)
-	{
-	SDL_RemoveTimer((*temps).horloge);  // arret timer
 
+int horlogeSuppression(horlogeT * horloge)
+	{
+	SDL_RemoveTimer((*horloge).horloge);	// Suppression du timer
 	return 0;
+	}
+
+int horlogeChronoDepart(horlogeT * horloge)
+	{
+	(*horloge).depart = SDL_GetTicks();	// Départ du chronomètre
+	return 0;
+	}
+
+int horlogeChronoDuree(horlogeT * horloge)
+	{					// Durée chronométrée
+	return (int)(SDL_GetTicks() - (*horloge).depart);
 	}
 
 //////////////////////////////////////////////////////////////////////////////
